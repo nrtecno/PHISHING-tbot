@@ -1,12 +1,6 @@
-# Phishing Bot - Modular
+# Phishing Bot - Cam Hack Only
 
-Telegram bot for security testing.
-
-## Modules
-- Cam Hack
-- Social Media (Instagram, Facebook, Twitter, Snapchat)
-- Gmail
-- Free Fire
+Only Cam Hack is working. Other buttons coming soon.
 
 ## Deploy on Render
 1. Set env vars: BOT_TOKEN, PRIVATE_CHANNEL_ID, BASE_URL
