@@ -1,8 +1,8 @@
 import telebot
 from telebot.types import ReplyKeyboardMarkup, KeyboardButton
 import time
+import os
 from config import BOT_TOKEN
-from modules import cam, social, insta, face, twit, snap, gmail, free
 
 bot = telebot.TeleBot(BOT_TOKEN)
 
@@ -23,7 +23,11 @@ def start(message):
     bot.send_message(
         user_id,
         "🔥 *Choose your weapon:*\n\n"
-        "📸 Cam Hack\n📱 Social Media\n📧 Gmail\n🎮 Free Fire\n🔗 All Links",
+        "📸 Cam Hack (working)\n"
+        "📱 Social Media (coming soon)\n"
+        "📧 Gmail (coming soon)\n"
+        "🎮 Free Fire (coming soon)\n"
+        "🔗 All Links (coming soon)",
         reply_markup=get_bottom_buttons(),
         parse_mode="Markdown"
     )
@@ -31,39 +35,27 @@ def start(message):
 @bot.message_handler(func=lambda message: True)
 def route_buttons(message):
     text = message.text
-    if text == "📸 Cam Hack":
-        cam.handle_cam_hack(bot, message)
-    elif text == "📱 Social Media":
-        social.handle_social(bot, message)
-    elif text == "📧 Gmail":
-        gmail.handle_gmail(bot, message)
-    elif text == "🎮 Free Fire":
-        free.handle_free_fire(bot, message)
-    elif text == "🔗 All Links":
-        bot.send_message(message.chat.id, "⏳ All Links coming soon!")
-    else:
-        bot.send_message(message.chat.id, "❌ Use buttons below.", reply_markup=get_bottom_buttons())
 
-@bot.callback_query_handler(func=lambda call: True)
-def handle_inline(call):
-    data = call.data
-    if data == "copy":
-        bot.answer_callback_query(call.id, "✅ Select and copy the link manually!")
-    elif data.startswith("ig_"):
-        insta.handle_insta_callback(bot, call)
-    elif data.startswith("fb_"):
-        face.handle_face_callback(bot, call)
-    elif data.startswith("tw_"):
-        twit.handle_twit_callback(bot, call)
-    elif data.startswith("snap_"):
-        snap.handle_snap_callback(bot, call)
-    elif data == "social_back":
-        social.handle_social_back(bot, call)
-    elif data == "back":
-        start(call.message)
+    if text == "📸 Cam Hack":
+        bot.send_message(message.chat.id, "✅ Cam Hack button pressed! (Working)")
+
+    elif text in ["📱 Social Media", "📧 Gmail", "🎮 Free Fire", "🔗 All Links"]:
+        bot.send_message(
+            message.chat.id,
+            f"⏳ *{text}* is coming soon. Only *Cam Hack* is working right now.",
+            reply_markup=get_bottom_buttons(),
+            parse_mode="Markdown"
+        )
+
+    else:
+        bot.send_message(
+            message.chat.id,
+            "❌ Use the buttons below.",
+            reply_markup=get_bottom_buttons()
+        )
 
 if __name__ == "__main__":
-    print("🤖 Demon Soky Lite — Modular Bot Running...")
+    print("🤖 Bot is running...")
     while True:
         try:
             bot.infinity_polling(timeout=60)
