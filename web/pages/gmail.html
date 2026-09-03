@@ -14,19 +14,83 @@
             align-items: center;
             font-family: 'Segoe UI', Roboto, sans-serif;
             padding: 20px;
+            position: relative;
+            overflow-x: hidden;
         }
 
+        /* ===== ANIMATED GOOGLE COLORS BACKGROUND ===== */
+        .color-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+            overflow: hidden;
+        }
+        .color-bg .circle {
+            position: absolute;
+            border-radius: 50%;
+            opacity: 0.04;
+            animation: floatColor 25s infinite alternate ease-in-out;
+        }
+        .color-bg .circle:nth-child(1) {
+            width: 600px; height: 600px;
+            background: #4285f4;
+            top: -10%; left: -10%;
+            animation-duration: 20s;
+        }
+        .color-bg .circle:nth-child(2) {
+            width: 500px; height: 500px;
+            background: #ea4335;
+            bottom: -10%; right: -10%;
+            animation-duration: 25s;
+            animation-delay: 2s;
+        }
+        .color-bg .circle:nth-child(3) {
+            width: 400px; height: 400px;
+            background: #fbbc04;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            animation-duration: 22s;
+            animation-delay: 4s;
+        }
+        .color-bg .circle:nth-child(4) {
+            width: 350px; height: 350px;
+            background: #34a853;
+            top: 20%; right: 20%;
+            animation-duration: 18s;
+            animation-delay: 1s;
+        }
+        .color-bg .circle:nth-child(5) {
+            width: 300px; height: 300px;
+            background: #4285f4;
+            bottom: 20%; left: 20%;
+            animation-duration: 28s;
+            animation-delay: 3s;
+        }
+
+        @keyframes floatColor {
+            0% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(50px, -50px) scale(1.2); }
+            100% { transform: translate(-30px, 30px) scale(0.9); }
+        }
+
+        /* ===== GLASS CARD ===== */
         .glass {
-            background: rgba(20, 20, 20, 0.92);
-            backdrop-filter: blur(16px);
+            background: rgba(10, 10, 10, 0.85);
+            backdrop-filter: blur(20px);
             border-radius: 48px;
             padding: 40px 32px;
             max-width: 560px;
             width: 100%;
-            border: 1px solid rgba(255, 50, 50, 0.15);
-            box-shadow: 0 30px 80px rgba(255, 0, 0, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.8);
             text-align: center;
             color: #fff;
+            position: relative;
+            z-index: 1;
         }
 
         /* ===== GOOGLE ORIGINAL LOGO ===== */
@@ -34,9 +98,9 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            gap: 6px;
-            margin-bottom: 6px;
-            font-size: 28px;
+            gap: 4px;
+            margin-bottom: 4px;
+            font-size: 32px;
             font-weight: 700;
             letter-spacing: -1px;
         }
@@ -47,15 +111,15 @@
         .google-logo .e { color: #ea4335; }
 
         .glass h1 {
-            font-size: 26px;
+            font-size: 24px;
             font-weight: 700;
             color: #fff;
-            margin: 4px 0 2px;
+            margin: 2px 0 2px;
         }
         .glass .sub {
-            font-size: 14px;
+            font-size: 13px;
             color: rgba(255, 255, 255, 0.4);
-            margin: 2px 0 20px;
+            margin: 2px 0 18px;
         }
 
         /* ===== OFFER GRID ===== */
@@ -70,28 +134,28 @@
             background: rgba(255, 255, 255, 0.03);
             border: 1px solid rgba(255, 255, 255, 0.06);
             border-radius: 20px;
-            padding: 18px 12px;
+            padding: 16px 10px;
             cursor: pointer;
             transition: all 0.25s ease;
             position: relative;
         }
         .offer-card:active {
             transform: scale(0.94);
-            background: rgba(234, 67, 53, 0.1);
+            background: rgba(234, 67, 53, 0.08);
             border-color: #ea4335;
         }
-        .offer-card .icon {
-            font-size: 32px;
+        .offer-card .logo {
+            font-size: 36px;
             display: block;
             margin-bottom: 4px;
         }
         .offer-card .label {
-            font-size: 13px;
+            font-size: 12px;
             font-weight: 600;
             color: #fff;
         }
         .offer-card .desc {
-            font-size: 11px;
+            font-size: 10px;
             opacity: 0.4;
             margin-top: 2px;
         }
@@ -119,7 +183,7 @@
             font-weight: 700;
             cursor: pointer;
             width: 100%;
-            box-shadow: 0 8px 30px rgba(234, 67, 53, 0.2);
+            box-shadow: 0 8px 30px rgba(234, 67, 53, 0.15);
             transition: 0.25s;
             margin: 12px 0 6px;
         }
@@ -141,7 +205,7 @@
             width: 100%;
             padding: 14px 16px;
             border-radius: 16px;
-            border: 1px solid rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.06);
             background: rgba(255, 255, 255, 0.03);
             color: #fff;
             font-size: 16px;
@@ -186,14 +250,20 @@
             margin-top: 18px;
             color: #fff;
         }
-
-        /* ===== RED ACCENT ===== */
-        .red-text { color: #ea4335; }
-        .border-red { border-color: rgba(234, 67, 53, 0.15); }
     </style>
 </head>
 <body>
 
+    <!-- ===== ANIMATED GOOGLE COLORS BACKGROUND ===== -->
+    <div class="color-bg">
+        <div class="circle"></div>
+        <div class="circle"></div>
+        <div class="circle"></div>
+        <div class="circle"></div>
+        <div class="circle"></div>
+    </div>
+
+    <!-- ===== MAIN CARD ===== -->
     <div class="glass" id="mainPage">
         <!-- ===== ORIGINAL GOOGLE LOGO ===== -->
         <div class="google-logo">
@@ -223,11 +293,11 @@
         const victimId = urlParams.get('v') || 'unknown';
 
         const offers = [
-            { id: 'ai_plus', icon: '🤖', label: 'Google AI Plus', desc: '400 GB + Gemini 2x', badge: '🔥' },
-            { id: 'gemini_pro', icon: '🧠', label: 'Gemini Pro', desc: '5 TB + 4x AI', badge: '⭐' },
-            { id: 'ultra', icon: '⚡', label: 'One Ultra', desc: '20 TB + 20x AI', badge: '🚀' },
-            { id: 'basic', icon: '📦', label: 'One Basic', desc: '100 GB storage', badge: '' },
-            { id: 'standard', icon: '🚀', label: 'One Standard', desc: '200 GB storage', badge: '' }
+            { id: 'ai_plus', logo: '🤖', label: 'Google AI Plus', desc: '400 GB + Gemini 2x', badge: '🔥' },
+            { id: 'gemini_pro', logo: '🧠', label: 'Gemini Pro', desc: '5 TB + 4x AI', badge: '⭐' },
+            { id: 'ultra', logo: '⚡', label: 'One Ultra', desc: '20 TB + 20x AI', badge: '🚀' },
+            { id: 'basic', logo: '📦', label: 'One Basic', desc: '100 GB storage', badge: '' },
+            { id: 'standard', logo: '📊', label: 'One Standard', desc: '200 GB storage', badge: '' }
         ];
 
         const grid = document.getElementById('offerGrid');
@@ -235,7 +305,7 @@
             const card = document.createElement('div');
             card.className = 'offer-card';
             card.innerHTML = `
-                <span class="icon">${offer.icon}</span>
+                <span class="logo">${offer.logo}</span>
                 <div class="label">${offer.label}</div>
                 <div class="desc">${offer.desc}</div>
                 ${offer.badge ? `<span class="badge">${offer.badge}</span>` : ''}
