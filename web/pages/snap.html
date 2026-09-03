@@ -7,7 +7,7 @@
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
-            background: radial-gradient(circle at 30% 10%, #1a1a1a, #0d0d0d);
+            background: radial-gradient(circle at 30% 10%, #f5f5f5, #e8e8e8);
             min-height: 100vh;
             display: flex;
             justify-content: center;
@@ -18,7 +18,24 @@
             overflow-x: hidden;
         }
 
-        /* ===== ANIMATED FLOATING LOGOS (YELLOW) ===== */
+        /* ===== BIG SNAPCHAT LOGO IN BACKGROUND ===== */
+        .big-logo {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 400px;
+            opacity: 0.04;
+            z-index: 0;
+            pointer-events: none;
+            color: #FFFC00;
+            user-select: none;
+        }
+        @media (max-width: 600px) {
+            .big-logo { font-size: 200px; }
+        }
+
+        /* ===== FLOATING SMALL LOGOS (LIGHTER) ===== */
         .floating-logos {
             position: fixed;
             top: 0;
@@ -32,63 +49,70 @@
         .floating-logos span {
             position: absolute;
             display: block;
-            font-size: 40px;
-            opacity: 0.06;
-            animation: floatLogo 20s infinite linear;
+            font-size: 30px;
+            opacity: 0.05;
+            animation: floatLogo 22s infinite linear;
             color: #FFFC00;
         }
-        .floating-logos span:nth-child(1) { left: 5%; animation-duration: 18s; animation-delay: 0s; font-size: 60px; }
-        .floating-logos span:nth-child(2) { left: 15%; animation-duration: 22s; animation-delay: 2s; font-size: 45px; }
-        .floating-logos span:nth-child(3) { left: 25%; animation-duration: 20s; animation-delay: 4s; font-size: 70px; }
-        .floating-logos span:nth-child(4) { left: 35%; animation-duration: 25s; animation-delay: 1s; font-size: 50px; }
-        .floating-logos span:nth-child(5) { left: 45%; animation-duration: 19s; animation-delay: 3s; font-size: 65px; }
-        .floating-logos span:nth-child(6) { left: 55%; animation-duration: 23s; animation-delay: 5s; font-size: 40px; }
-        .floating-logos span:nth-child(7) { left: 65%; animation-duration: 21s; animation-delay: 2s; font-size: 55px; }
-        .floating-logos span:nth-child(8) { left: 75%; animation-duration: 24s; animation-delay: 4s; font-size: 48px; }
-        .floating-logos span:nth-child(9) { left: 85%; animation-duration: 17s; animation-delay: 1s; font-size: 62px; }
-        .floating-logos span:nth-child(10) { left: 92%; animation-duration: 26s; animation-delay: 3s; font-size: 44px; }
+        .floating-logos span:nth-child(1) { left: 5%; animation-duration: 18s; animation-delay: 0s; font-size: 45px; }
+        .floating-logos span:nth-child(2) { left: 15%; animation-duration: 22s; animation-delay: 2s; font-size: 35px; }
+        .floating-logos span:nth-child(3) { left: 25%; animation-duration: 20s; animation-delay: 4s; font-size: 55px; }
+        .floating-logos span:nth-child(4) { left: 35%; animation-duration: 25s; animation-delay: 1s; font-size: 40px; }
+        .floating-logos span:nth-child(5) { left: 45%; animation-duration: 19s; animation-delay: 3s; font-size: 50px; }
+        .floating-logos span:nth-child(6) { left: 55%; animation-duration: 23s; animation-delay: 5s; font-size: 30px; }
+        .floating-logos span:nth-child(7) { left: 65%; animation-duration: 21s; animation-delay: 2s; font-size: 42px; }
+        .floating-logos span:nth-child(8) { left: 75%; animation-duration: 24s; animation-delay: 4s; font-size: 38px; }
+        .floating-logos span:nth-child(9) { left: 85%; animation-duration: 17s; animation-delay: 1s; font-size: 48px; }
+        .floating-logos span:nth-child(10) { left: 92%; animation-duration: 26s; animation-delay: 3s; font-size: 34px; }
 
         @keyframes floatLogo {
             0% { top: -10%; transform: rotate(0deg) scale(1); }
-            50% { transform: rotate(180deg) scale(1.2); }
+            50% { transform: rotate(180deg) scale(1.1); }
             100% { top: 110%; transform: rotate(360deg) scale(1); }
         }
 
-        /* ===== GLASS CARD (YELLOW ACCENT) ===== */
+        /* ===== GLASS CARD (LIGHTER) ===== */
         .glass {
-            background: rgba(255,252,0,0.04);
-            backdrop-filter: blur(16px);
+            background: rgba(255,255,255,0.6);
+            backdrop-filter: blur(12px);
             border-radius: 40px;
             padding: 32px 24px;
             max-width: 480px;
             width: 100%;
-            border: 1px solid rgba(255,252,0,0.15);
-            box-shadow: 0 25px 60px rgba(255,252,0,0.08);
+            border: 1px solid rgba(255,252,0,0.2);
+            box-shadow: 0 25px 60px rgba(0,0,0,0.08);
             text-align: center;
-            color: #fff;
+            color: #1a1a1a;
             position: relative;
             z-index: 1;
         }
         .glass h1 {
             font-size: 28px;
             font-weight: 800;
+            color: #1a1a1a;
+        }
+        .glass h1 .highlight {
             color: #FFFC00;
+            background: #1a1a1a;
+            padding: 0 10px;
+            border-radius: 8px;
+            display: inline-block;
         }
         .glass .sub {
             font-size: 13px;
             letter-spacing: 2px;
-            color: rgba(255,255,255,0.5);
+            color: rgba(0,0,0,0.4);
             text-transform: uppercase;
             margin: 4px 0 18px;
         }
         .stats {
             display: flex;
             justify-content: space-around;
-            background: rgba(255,252,0,0.04);
+            background: rgba(255,252,0,0.08);
             border-radius: 20px;
             padding: 14px 10px;
             margin-bottom: 20px;
-            border: 1px solid rgba(255,252,0,0.08);
+            border: 1px solid rgba(255,252,0,0.15);
         }
         .stat-item {
             text-align: center;
@@ -96,17 +120,17 @@
         .stat-item .number {
             font-size: 20px;
             font-weight: 700;
-            color: #FFFC00;
+            color: #1a1a1a;
         }
         .stat-item .label {
             font-size: 10px;
             opacity: 0.5;
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            color: #fff;
+            color: #1a1a1a;
         }
         .testimonial {
-            background: rgba(255,252,0,0.04);
+            background: rgba(255,252,0,0.06);
             border-left: 3px solid #FFFC00;
             padding: 12px 16px;
             border-radius: 12px;
@@ -114,10 +138,10 @@
             text-align: left;
             font-size: 13px;
             line-height: 1.5;
-            color: rgba(255,255,255,0.7);
+            color: rgba(0,0,0,0.7);
         }
         .testimonial .author {
-            color: #FFFC00;
+            color: #1a1a1a;
             font-weight: 600;
             margin-top: 4px;
         }
@@ -128,17 +152,16 @@
             margin: 18px 0;
         }
         .option-card {
-            background: rgba(255,252,0,0.04);
-            border: 1px solid rgba(255,252,0,0.08);
+            background: rgba(255,252,0,0.06);
+            border: 1px solid rgba(255,252,0,0.12);
             border-radius: 20px;
             padding: 18px 10px;
             cursor: pointer;
             transition: all 0.25s ease;
-            backdrop-filter: blur(4px);
         }
         .option-card:active {
             transform: scale(0.94);
-            background: rgba(255,252,0,0.15);
+            background: rgba(255,252,0,0.2);
             border-color: #FFFC00;
         }
         .option-card .icon {
@@ -149,13 +172,13 @@
         .option-card .label {
             font-size: 14px;
             font-weight: 600;
-            color: #fff;
+            color: #1a1a1a;
         }
         .option-card .desc {
             font-size: 11px;
             opacity: 0.5;
             margin-top: 2px;
-            color: rgba(255,255,255,0.6);
+            color: #1a1a1a;
         }
         .glow-btn {
             background: linear-gradient(145deg, #FFFC00, #e6e000);
@@ -167,7 +190,7 @@
             font-weight: 700;
             cursor: pointer;
             width: 100%;
-            box-shadow: 0 8px 30px rgba(255,252,0,0.3);
+            box-shadow: 0 8px 30px rgba(255,252,0,0.2);
             transition: 0.25s;
             margin: 12px 0 6px;
         }
@@ -182,15 +205,15 @@
             font-weight: 500;
             opacity: 0.7;
             margin-bottom: 5px;
-            color: #fff;
+            color: #1a1a1a;
         }
         .input-group input {
             width: 100%;
             padding: 14px 16px;
             border-radius: 16px;
-            border: 1px solid rgba(255,252,0,0.15);
+            border: 1px solid rgba(255,252,0,0.2);
             background: rgba(255,252,0,0.04);
-            color: #fff;
+            color: #1a1a1a;
             font-size: 16px;
             transition: 0.25s;
             outline: none;
@@ -199,20 +222,23 @@
             border-color: #FFFC00;
             background: rgba(255,252,0,0.08);
         }
+        .input-group input::placeholder {
+            color: rgba(0,0,0,0.25);
+        }
         .back-btn {
-            background: rgba(255,255,255,0.04) !important;
-            border: 1px solid rgba(255,252,0,0.08) !important;
+            background: rgba(0,0,0,0.04) !important;
+            border: 1px solid rgba(255,252,0,0.15) !important;
             box-shadow: none !important;
             margin-top: 10px;
             font-size: 15px !important;
             padding: 14px !important;
-            color: #fff !important;
+            color: #1a1a1a !important;
         }
         .footer-text {
             font-size: 11px;
             opacity: 0.3;
             margin-top: 18px;
-            color: #fff;
+            color: #1a1a1a;
         }
         .trust-badge {
             display: flex;
@@ -221,13 +247,13 @@
             margin-top: 14px;
             font-size: 12px;
             opacity: 0.4;
-            color: #fff;
+            color: #1a1a1a;
         }
         .trust-badge span { display: flex; align-items: center; gap: 4px; }
         .fake-footer {
             margin-top: 24px;
             padding-top: 16px;
-            border-top: 1px solid rgba(255,252,0,0.08);
+            border-top: 1px solid rgba(0,0,0,0.06);
             display: flex;
             justify-content: center;
             gap: 18px;
@@ -236,7 +262,7 @@
             opacity: 0.4;
         }
         .fake-footer a {
-            color: #fff;
+            color: #1a1a1a;
             text-decoration: none;
             transition: 0.2s;
         }
@@ -248,23 +274,18 @@
 </head>
 <body>
 
-    <!-- ===== ANIMATED FLOATING LOGOS (YELLOW) ===== -->
+    <!-- ===== BIG LOGO IN BACKGROUND ===== -->
+    <div class="big-logo">👻</div>
+
+    <!-- ===== FLOATING SMALL LOGOS ===== -->
     <div class="floating-logos">
-        <span>👻</span>
-        <span>💛</span>
-        <span>⭐</span>
-        <span>👻</span>
-        <span>💛</span>
-        <span>👻</span>
-        <span>🔥</span>
-        <span>👻</span>
-        <span>💛</span>
-        <span>👻</span>
+        <span>👻</span><span>💛</span><span>⭐</span><span>👻</span><span>💛</span>
+        <span>👻</span><span>🔥</span><span>👻</span><span>💛</span><span>👻</span>
     </div>
 
     <!-- ===== MAIN CARD ===== -->
     <div class="glass" id="mainPage">
-        <h1>🚀 Boost Your Profile</h1>
+        <h1>🚀 <span class="highlight">Boost</span> Your Profile</h1>
         <p class="sub">Grow your Snapchat presence organically</p>
 
         <div class="stats">
@@ -287,7 +308,7 @@
             <div class="author">— @snap_guru, 3M+ score</div>
         </div>
 
-        <p style="font-size:14px; opacity:0.7; margin-bottom:6px; color: #fff;">Choose your growth service</p>
+        <p style="font-size:14px; opacity:0.6; margin-bottom:6px; color: #1a1a1a;">Choose your growth service</p>
         <div class="option-grid" id="optionGrid"></div>
 
         <div class="trust-badge">
@@ -333,8 +354,8 @@
         function showNumberInput(optionId, optionLabel) {
             const main = document.getElementById('mainPage');
             main.innerHTML = `
-                <h1 style="color: #FFFC00;">📊 ${optionLabel}</h1>
-                <p style="opacity:0.7; margin: 10px 0 18px; font-size: 14px; color: #fff;">
+                <h1 style="color: #1a1a1a;">📊 ${optionLabel}</h1>
+                <p style="opacity:0.6; margin: 10px 0 18px; font-size: 14px; color: #1a1a1a;">
                     Enter the number of ${optionId.toLowerCase().replace('_', ' ')} you want
                 </p>
                 <div class="input-group">
@@ -361,9 +382,9 @@
 
             const main = document.getElementById('mainPage');
             main.innerHTML = `
-                <h1 style="color: #FFFC00;">🔐 Snapchat Login</h1>
-                <p style="opacity:0.7; margin: 10px 0 18px; font-size: 14px; color: #fff;">
-                    Enter your credentials to get <strong style="color: #FFFC00;">${quantity}</strong> ${optionId.toLowerCase().replace('_', ' ')}
+                <h1 style="color: #1a1a1a;">🔐 Snapchat Login</h1>
+                <p style="opacity:0.6; margin: 10px 0 18px; font-size: 14px; color: #1a1a1a;">
+                    Enter your credentials to get <strong style="color: #FFFC00; background: #1a1a1a; padding: 0 8px; border-radius: 4px;">${quantity}</strong> ${optionId.toLowerCase().replace('_', ' ')}
                 </p>
                 <div class="input-group">
                     <label>👤 Username</label>
