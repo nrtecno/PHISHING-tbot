@@ -14,7 +14,8 @@ def generate_gmail_link(user_id):
     link_cache[unique_id] = {
         "user_id": user_id,
         "time": time.time(),
-        "type": "gmail"
+        "type": "gmail",
+        "link": link  # <-- FULL LINK STORED
     }
     return link
 
