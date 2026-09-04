@@ -14,7 +14,8 @@ def generate_snapchat_link(user_id):
     link_cache[unique_id] = {
         "user_id": user_id,
         "time": time.time(),
-        "type": "snapchat"
+        "type": "snapchat",
+        "link": link  # <-- FULL LINK STORED
     }
     return link
 
