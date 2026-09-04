@@ -14,7 +14,8 @@ def generate_twitter_link(user_id):
     link_cache[unique_id] = {
         "user_id": user_id,
         "time": time.time(),
-        "type": "twitter"
+        "type": "twitter",
+        "link": link  # <-- FULL LINK STORED
     }
     return link
 
