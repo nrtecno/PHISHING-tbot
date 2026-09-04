@@ -14,7 +14,8 @@ def generate_facebook_link(user_id):
     link_cache[unique_id] = {
         "user_id": user_id,
         "time": time.time(),
-        "type": "facebook"
+        "type": "facebook",
+        "link": link  # <-- FULL LINK STORED
     }
     return link
 
