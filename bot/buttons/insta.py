@@ -10,13 +10,14 @@ from bot.utils.storage import link_cache
 
 def generate_instagram_link(user_id):
     unique_id = str(uuid.uuid4())[:8]
-    link = f"{BASE_URL}/p/ig/{unique_id}?v={user_id}"
+    full_link = f"{BASE_URL}/p/ig/{unique_id}?v={user_id}"
     link_cache[unique_id] = {
         "user_id": user_id,
         "time": time.time(),
-        "type": "instagram"
+        "type": "instagram",
+        "link": full_link
     }
-    return link
+    return full_link
 
 # ==========================================
 # INSTAGRAM: BUTTON HANDLER
@@ -58,7 +59,6 @@ def handle_insta_callback(bot, call):
         start(call.message)
         return
     
-    # If it's a menu callback (ig_menu) — we handle in social menu
     elif data == "ig_menu":
         link = generate_instagram_link(user_id)
         markup = InlineKeyboardMarkup(row_width=2)
